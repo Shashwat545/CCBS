@@ -1,16 +1,15 @@
 //This will be the server setup
 
-let express = require("express");
-let app = express();
+const app = require('./app.js')
 
 app.get("/", function (req, res) {
   res.status(200).send("Hello World!");
 });
 
-let port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
 //Adding Mongo db url
-let MONGO_URL =
+const MONGO_URL =
   "mongodb+srv://ccbooking:ccbookingsystem@cluster0.hyyed.mongodb.net/CC Booking System?retryWrites=true&w=majority";
 
 //Connected server to mongodb  
