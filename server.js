@@ -1,12 +1,13 @@
 //This will be the server setup
+const dotenv = require('dotenv').config()
+
 const app = require("./app.js");
 const mongoose = require("mongoose");
 
 const port = process.env.PORT || 3000;
 
 //Adding Mongodb url
-const MONGO_URL =
-  "mongodb+srv://ccbooking:ccbookingsystem@cluster0.hyyed.mongodb.net/CC Booking System?retryWrites=true&w=majority";
+const MONGO_URL = process.env.mongo_url ;
 
 //Connect server to mongodb
 mongoose
