@@ -1,5 +1,5 @@
 //This will be the server setup
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 
 const app = require("./app.js");
 const mongoose = require("mongoose");
