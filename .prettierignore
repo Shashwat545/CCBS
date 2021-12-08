@@ -102,3 +102,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+### project-specific ###
+# Ignore the `client/` folder from here: Separately install prettier in the
+# client project
+/client/
