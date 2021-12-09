@@ -1,5 +1,5 @@
 //This will be the server setup
-const dotenv = require('dotenv').config()
+require("dotenv").config();
 
 const app = require("./app.js");
 const mongoose = require("mongoose");
@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const port = process.env.PORT || 3000;
 
 //Adding Mongodb url
-const MONGO_URL = process.env.mongo_url ;
+const MONGO_URL = process.env.mongo_url;
 
 //Connect server to mongodb
 mongoose
@@ -15,7 +15,7 @@ mongoose
   .then(() => {
     console.log("Connected to MongoDB!");
     console.log("Starting webserver..");
-    app.listen(port,() => {
+    app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
   })
