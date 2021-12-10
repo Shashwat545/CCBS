@@ -1,25 +1,30 @@
 const mongoose = require("mongoose");
-
+const validator = require("validator");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  emailid: {
+  emailId: {
     type: String,
-    required: true,
+    required: [true, "Please provide your email"],
+    trim: true,
+    validate: [validator.isEmail, "Please provide a valid email"],
+    unique: true,
   },
-  username: {
+  userName: {
     type: String,
-    required: true,
+    required: [true, "Name of the user should be specified"],
   },
-  phoneno: {
-    type: Number,
-    required: true,
+  phoneNo: {
+    type: String,
+    required: [true, "Please provide your phone number"],
   },
   role: {
     type: String,
-    required: true,
+    required: [true, "Role of the user should be specified"],
+    enum: ["student", "admin", "superAdmin"],
+    default: "student",
   },
-  rollno: {
+  rollNo: {
     type: String,
     required: false,
   },
