@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
-require("mongoose-type-email");
+const validator = require("validator");
 const Schema = mongoose.Schema;
-mongoose.SchemaTypes.Email.defaults.message = "Email address is invalid";
 
 const userSchema = new Schema({
   emailId: {
@@ -9,6 +8,7 @@ const userSchema = new Schema({
     required: [true, "Please provide your email"],
     trim: true,
     unique: true,
+    validate: [validator.isEmail, "Please provide a valid email"],
   },
   userName: {
     type: String,
