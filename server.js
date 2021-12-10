@@ -4,6 +4,8 @@ require("dotenv").config();
 const app = require("./app.js");
 const mongoose = require("mongoose");
 
+const viewAllBooking = require('./routes/viewAllBookingRoute')
+
 const port = process.env.PORT || 3000;
 
 //Adding Mongodb url
@@ -23,3 +25,18 @@ mongoose
     console.log("Could not connect to MongoDB server! Shutting down...");
     console.log(err);
   });
+
+
+  const con = mongoose.connection
+
+  con.on('open',() => {
+    console.log("connected....")
+  })
+
+
+  app.use('/viewAllBookings',viewAllBooking)
+
+
+  app.listen(port, () =>   {
+    console.log("server started")
+  })
