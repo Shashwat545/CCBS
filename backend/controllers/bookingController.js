@@ -1,4 +1,5 @@
 express = require("express");
+
 const bookingModel = require("../models/bookingModel");
 
 const getAllBookings = async (req, res) => {
