@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const slotSchema = new Schema({
+const bookingSchema = new Schema({
   startTime: {
     type: Date,
     required: [true, "Please provide Starting time of the event"],
@@ -9,7 +9,7 @@ const slotSchema = new Schema({
   },
   endTime: {
     type: Date,
-    required: [true, "Please provide Endting time of the event"],
+    required: [true, "Please provide Ending time of the event"],
     default: Date.now(),
   },
   reason: {
@@ -19,7 +19,7 @@ const slotSchema = new Schema({
   bookedBy: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    require: true,
+    required: true,
   },
   isApproved: {
     type : Boolean,
@@ -27,4 +27,4 @@ const slotSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model("Slot", slotSchema);
+module.exports = mongoose.model("booking", bookingSchema);

@@ -10,9 +10,9 @@ const getAllBookings = async (req,res) => {
     }
 }
 
-const getBooking = async (req,res) => {
+const getOneBooking = async (req,res) => {
     try{
-            const bookings = await bookingModel.findById(req.params.id);      //should I keep this params or body as anyone could see other booking also with this method.
+            const bookings = await bookingModel.findById(req.params.bookingId);      
             res.status(200).json(bookings);                                         
     }catch(err){
             res.status(500).send("Error in booking" + err)
@@ -21,9 +21,9 @@ const getBooking = async (req,res) => {
 
 const createBooking = async(req,res) => {
     const newBooking = new bookingModel({
-            start_time : req.body.startTime,
-            end_time : req.body.endTime,
-            reason :  req.body.reason
+            startTime : req.body.startTime,
+            endTime : req.body.endTime,
+            reason :  req.body.reason,
     })
     try{
             const bookRequest = await newBooking.save()
@@ -33,9 +33,10 @@ const createBooking = async(req,res) => {
     }
 }
 
+
 const deleteBooking = async(req,res) => {
         try{
-                await bookingModel.findByIdAndRemove(req.params.id)
+                await bookingModel.findByIdAndRemove(req.params.bookingId)
                 res.status(200).send("Booking deleted successfully")
         }catch(err){
                 res.status(500).send(err);
@@ -44,10 +45,10 @@ const deleteBooking = async(req,res) => {
 
 const updateBooking = async(req,res) => {
         try{
-                const booking = findById(req.params.id);
+                const booking = findById(req.params.bookingId);
                 const updates = req.body;
-                const result = await bookingModel.findByIdAndUpdate(req.params.id, updates, {new: true});
-                res.status(200).send(result);
+                const result = await bookingModel.findByIdAndUpdate(req.params.bookingId, updates, {new: true});
+                res.status(200).json(result);
         }catch(err){
                 res.status(500).send(err);
         }
@@ -58,7 +59,7 @@ const updateBooking = async(req,res) => {
 module.exports = {
         getAllBookings,
         createBooking,
-        getBooking,
+        getOneBooking,
         deleteBooking,
         updateBooking
 }
