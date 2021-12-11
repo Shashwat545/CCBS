@@ -13,7 +13,10 @@ const MONGO_URL = process.env.mongo_url;
 console.log(typeof(process.env.mongo_url), process.env.mongo_url);
 //Connect server to mongodb
 mongoose
-  .connect(MONGO_URL) 
+  .connect(MONGO_URL,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }) 
   .then(() => {
     console.log("Connected to MongoDB!");
     console.log("Starting webserver..");
