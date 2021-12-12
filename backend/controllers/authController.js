@@ -8,10 +8,14 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
 
+/** Helper function to get an OAuth2Client instance. */
 function getOAuth2Client() {
   return new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI);
 }
 
+/**
+ * Controller that redirects unauthenticated users to the OAuth consent page.
+ */
 async function oAuthRedirect(req, res, next) {
   if (req.session.credentials) {
     // If session is already logged in, do not redirect to OAuth consent screen.
@@ -46,6 +50,10 @@ async function oAuthRedirect(req, res, next) {
   }
 }
 
+/**
+ * Controller function that logs in user, given they have started an OAuth flow
+ * from the oAuthRedirect redirect URL, and have the correct authorization code.
+ */
 async function googleLogin(req, res, next) {
   const oAuth2Client = getOAuth2Client();
 
@@ -93,8 +101,21 @@ async function logout(req, res, next) {
   });
 }
 
+/**
+ * Middleware function, that can be used to check for authentication on
+ * protected API endpoints.
+ */
+async function isAuthenticated(req, res, next) {
+  if (req.session.credentials) {
+    next();
+  } else {
+    next(createError(401));
+  }
+}
+
 module.exports = {
   oAuthRedirect,
   googleLogin,
   logout,
+  isAuthenticated,
 };
