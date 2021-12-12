@@ -1,6 +1,4 @@
-//This will be the server setup
-require("dotenv").config();
-
+//Requiring app.js also runs dotenv.config(), so no need to run it again
 const app = require("./app.js");
 const mongoose = require("mongoose");
 
