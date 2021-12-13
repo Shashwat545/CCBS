@@ -1,6 +1,7 @@
 require("dotenv").config();
 const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 const express = require("express");
 const session = require("express-session");
 const app = express();
@@ -11,6 +12,12 @@ const bookingRouter = require("./routes/bookingRoutes");
 const SECRET_KEY = process.env.CCBS_SECRET_KEY;
 const MONGO_URL = process.env.mongo_url;
 
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -30,7 +37,10 @@ app.use(
     secret: SECRET_KEY,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: MONGO_URL }),
+    store: MongoStore.create({
+      mongoUrl: MONGO_URL,
+      dbName: "sessions",
+    }),
     cookie: {
       // 10 minutes age for cookies, debug setting
       maxAge: 10 * 60 * 1000,

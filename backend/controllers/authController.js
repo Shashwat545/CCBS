@@ -13,37 +13,21 @@ function getOAuth2Client() {
   return new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI);
 }
 
-/**
- * Controller that redirects unauthenticated users to the OAuth consent page.
- */
-async function oAuthRedirect(req, res, next) {
+/** Controller that returns the code challenge to the client. */
+async function getCodeChallenge(req, res, next) {
   if (req.session.credentials) {
     // If session is already logged in, do not redirect to OAuth consent screen.
-    res.status(200).send({ error: "Already logged in" });
+    res.status(200).json({ warning: "Already logged in" });
   } else {
     try {
       const oAuth2Client = getOAuth2Client();
 
       // Generate code challenge & verifier (PKCE)
-      const { codeChallenge, codeVerifier } =
+      const { codeVerifier, codeChallenge } =
         await oAuth2Client.generateCodeVerifierAsync();
       // Store the code verifier in the session
       req.session.codeVerifier = codeVerifier;
-
-      // Generate auth URL
-      const authUrl = oAuth2Client.generateAuthUrl({
-        access_type: "offline",
-        code_challenge_method: "S256",
-        code_challenge: codeChallenge,
-        scope: [
-          "https://www.googleapis.com/auth/userinfo.email",
-          "https://www.googleapis.com/auth/userinfo.profile",
-          "openid",
-        ],
-      });
-
-      // Redirect user to the generated auth URL
-      res.redirect(authUrl);
+      res.status(201).json({ codeChallenge });
     } catch (err) {
       next(err);
     }
@@ -61,7 +45,10 @@ async function googleLogin(req, res, next) {
   const code = req.body.code;
   const codeVerifier = req.session.codeVerifier;
 
-  if (!req.session.credentials) {
+  if (req.session.credentials) {
+    // If already logged in, do not go through the OAuth flow
+    res.status(201).json({ warning: "Already logged in" });
+  } else {
     try {
       // Request for an access token.
       const { tokens } = await oAuth2Client.getToken({ code, codeVerifier });
@@ -71,12 +58,13 @@ async function googleLogin(req, res, next) {
 
       // Storing credentials in session storage
       req.session.credentials = tokens;
+
+      res.sendStatus(201);
     } catch (err) {
       // If authorization code was invalid, we return 401 Unauthorized.
       next(createError(401, "Invalid code grant request"));
     }
   }
-  res.sendStatus(201);
 }
 
 async function logout(req, res, next) {
@@ -105,7 +93,7 @@ async function logout(req, res, next) {
  * Middleware function, that can be used to check for authentication on
  * protected API endpoints.
  */
-async function isAuthenticated(req, res, next) {
+async function isAuthenticated(req, _res, next) {
   if (req.session.credentials) {
     next();
   } else {
@@ -114,7 +102,7 @@ async function isAuthenticated(req, res, next) {
 }
 
 module.exports = {
-  oAuthRedirect,
+  getCodeChallenge,
   googleLogin,
   logout,
   isAuthenticated,
