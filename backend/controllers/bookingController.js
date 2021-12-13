@@ -21,6 +21,21 @@ const getOneBooking = async (req, res) => {
 };
 
 const createBooking = async (req, res) => {
+  //1) see if there is a booking already in conflict with this
+
+  //2) If there are bookings in conflict
+  //    a) if the user is an Admin (professors etc)
+  //        -> allow booking and send for approval
+  //        -> inform to the previously booked users via email
+  //    b) if the user is a SuperAdmin
+  //        -> allow booking without needing approval
+  //        -> inform to the previously booked users via email
+  //    c) if the user is a student
+  //        -> inform them that there are already slots booked on those days
+  //   If there is no conflict
+  //    -> allow booking and send for approval
+
+  
   const newBooking = new bookingModel({
     startTime: req.body.startTime,
     endTime: req.body.endTime,
