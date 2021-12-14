@@ -1,6 +1,7 @@
 /**
  * @file Contollers for authentication. Session-based using OAuth 2.0
  */
+const { validationResult } = require("express-validator");
 const createError = require("http-errors");
 const { OAuth2Client } = require("google-auth-library");
 
@@ -39,6 +40,11 @@ async function getCodeChallenge(req, res, next) {
  * from the oAuthRedirect redirect URL, and have the correct authorization code.
  */
 async function googleLogin(req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const oAuth2Client = getOAuth2Client();
 
   // Get authorization code from request and code verifier from session storage
