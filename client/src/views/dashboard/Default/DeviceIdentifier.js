@@ -19,7 +19,7 @@ export default class DeviceIdentifier extends React.PureComponent {
     handleWindowResize() {
         const resolution = window.innerWidth;
         console.log('resolution= ', resolution);
-        const isMobile = resolution >= 320 && resolution <= 485;
+        const isMobile = resolution >= 120 && resolution <= 485;
 
         const isTablet = resolution >= 485 && resolution <= 669;
 

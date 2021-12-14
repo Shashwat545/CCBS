@@ -135,54 +135,57 @@ export default function MaterialUIPickers() {
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DeviceIdentifier isMobile={true} isTablet={true}>
-                <Card className={styles.card} style={{ display: 'inline-block' }}>
-                    <CardContent className={styles.content}>
-                        <Stack spacing={4}>
-                            <MobileDatePicker
-                                label="Start Date For the event"
-                                inputFormat="dd/MM/yyyy"
-                                value={StartDateForEvent}
-                                onChange={SetHandleChangeForStartEvent}
-                                variant="outlined"
-                                renderInput={(params) => <TextField {...params} />}
-                            />
-                            <MobileDatePicker
-                                label="End Date For the event"
-                                inputFormat="dd/MM/yyyy"
-                                value={EndDateForEvent}
-                                onChange={SetHandleChangeForEndEvent}
-                                variant="outlined"
-                                renderInput={(params) => <TextField {...params} />}
-                            />
+                <Grid container justify="center">
+                    <Card className={styles.card} style={{ display: 'inline-block' }}>
+                        {console.log('MOBILE MODE ACTIVATED')}
+                        <CardContent className={styles.content}>
+                            <Stack spacing={4}>
+                                <MobileDatePicker
+                                    label="Start Date For the event"
+                                    inputFormat="dd/MM/yyyy"
+                                    value={StartDateForEvent}
+                                    onChange={SetHandleChangeForStartEvent}
+                                    variant="outlined"
+                                    renderInput={(params) => <TextField {...params} />}
+                                />
+                                <MobileDatePicker
+                                    label="End Date For the event"
+                                    inputFormat="dd/MM/yyyy"
+                                    value={EndDateForEvent}
+                                    onChange={SetHandleChangeForEndEvent}
+                                    variant="outlined"
+                                    renderInput={(params) => <TextField {...params} />}
+                                />
 
-                            <MobileTimePicker
-                                label="Start Time for the event"
-                                value={StartDateForEvent}
-                                onChange={SetHandleChangeForStartEvent}
-                                renderInput={(params) => <TextField {...params} />}
-                            />
-                            <MobileTimePicker
-                                label="End Time for the event"
-                                value={EndDateForEvent}
-                                onChange={SetHandleChangeForEndEvent}
-                                renderInput={(params) => <TextField {...params} />}
-                            />
-                            <TextField
-                                id="outlined-textarea"
-                                onChange={(e) => handleOnchangeTextBox(e)}
-                                label="Reason for booking slot"
-                                variant="outlined"
-                                multiline
-                            />
-                            <Divider className={styles.divider} dark />
-                            <ListItem style={{ justifyContent: 'center' }}>
-                                <Button variant="contained" href="www.iitbbs.ac.in" style={{ maxWidth: '500px', minWidth: '300px' }}>
-                                    Submit
-                                </Button>
-                            </ListItem>
-                        </Stack>
-                    </CardContent>
-                </Card>
+                                <MobileTimePicker
+                                    label="Start Time for the event"
+                                    value={StartDateForEvent}
+                                    onChange={SetHandleChangeForStartEvent}
+                                    renderInput={(params) => <TextField {...params} />}
+                                />
+                                <MobileTimePicker
+                                    label="End Time for the event"
+                                    value={EndDateForEvent}
+                                    onChange={SetHandleChangeForEndEvent}
+                                    renderInput={(params) => <TextField {...params} />}
+                                />
+                                <TextField
+                                    id="outlined-textarea"
+                                    onChange={(e) => handleOnchangeTextBox(e)}
+                                    label="Reason for booking slot"
+                                    variant="outlined"
+                                    multiline
+                                />
+                                <Divider className={styles.divider} dark />
+                                <ListItem style={{ justifyContent: 'center' }}>
+                                    <Button variant="contained" href="www.iitbbs.ac.in" style={{ maxWidth: '500px', minWidth: '300px' }}>
+                                        Submit
+                                    </Button>
+                                </ListItem>
+                            </Stack>
+                        </CardContent>
+                    </Card>
+                </Grid>
                 <Snackbar
                     anchorOrigin={{
                         vertical: 'top',
@@ -257,7 +260,7 @@ export default function MaterialUIPickers() {
                             </ListItem>
                             <ListItem>
                                 <Grid container spacing={gridSpacing}>
-                                    <Grid item xs={12}>
+                                    <Grid item xs={11}>
                                         <TextField
                                             id="outlined-textarea"
                                             fullWidth
