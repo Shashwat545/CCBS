@@ -1,19 +1,20 @@
-//This will be the server setup
-require("dotenv").config();
-
+//Requiring app.js also runs dotenv.config(), so no need to run it again
 const app = require("./app.js");
 const mongoose = require("mongoose");
 
-const viewAllBooking = require('./routes/viewAllBookingRoute')
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 
 //Adding Mongodb url
 const MONGO_URL = process.env.mongo_url;
 
+console.log(typeof(process.env.mongo_url), process.env.mongo_url);
 //Connect server to mongodb
 mongoose
-  .connect(MONGO_URL)
+  .connect(MONGO_URL,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }) 
   .then(() => {
     console.log("Connected to MongoDB!");
     console.log("Starting webserver..");
@@ -27,16 +28,3 @@ mongoose
   });
 
 
-  const con = mongoose.connection
-
-  con.on('open',() => {
-    console.log("connected....")
-  })
-
-
-  app.use('/viewAllBookings',viewAllBooking)
-
-
-  app.listen(port, () =>   {
-    console.log("server started")
-  })

@@ -21,8 +21,14 @@
   },
   "homepage": "https://github.com/OmieSawie/CCBS#readme",
   "dependencies": {
+    "connect-mongo": "^4.6.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "google-auth-library": "^7.10.3",
+    "http-errors": "^1.8.1",
     "mongoose": "^6.1.1",
     "validator": "^13.7.0"
   },
