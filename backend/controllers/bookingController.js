@@ -1,4 +1,4 @@
-express = require("express");
+const userModel = require("../models/userModel");
 
 const bookingModel = require("../models/bookingModel");
 
@@ -35,17 +35,90 @@ const createBooking = async (req, res) => {
   //   If there is no conflict
   //    -> allow booking and send for approval
 
-  
-  const newBooking = new bookingModel({
-    startTime: req.body.startTime,
-    endTime: req.body.endTime,
+  // const user = new userModel({
+  //   emailId: "abc@iitbb.ac.in",
+  //   userName: "Ritik",
+  //   phoneNo: "8909876578",
+  //   role: "superAdmin",
+  // });
+  // user
+  //   .save()
+  //   .then(() => {
+  //     console.log("Dummy User Created");
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+
+  const user = await userModel.findById("61b9cfbfdd6335527c1831db");
+  // const newBooking2 = new bookingModel({
+  //   startTime: req.body.startTime,
+  //   endTime: req.body.endTime,
+  //   reason: req.body.reason,
+  //   bookedBy: user,
+  // });
+  // try {
+  //   const bookRequest = await newBooking.save();
+  //   res.status(200).json(bookRequest);
+  // } catch (err) {
+  //   res.status(500).send(err);
+  // }
+  const newBooking = {
+    startTime: new Date(req.body.startTime),
+    endTime: new Date(req.body.endTime),
     reason: req.body.reason,
+    bookedBy: user, //it will req.user that is created at the start of the session
+  };
+  const allbookings = await bookingModel.find();
+  const conflictbookings = allbookings.filter((booking) => {
+    if (
+      !(booking.startTime >= newBooking.endTime) &&
+      !(booking.endTime <= newBooking.startTime)
+    ) {
+      return booking;
+    }
   });
-  try {
-    const bookRequest = await newBooking.save();
-    res.status(200).json(bookRequest);
-  } catch (err) {
-    res.status(500).send(err);
+  if (conflictbookings.length > 0) {
+    conflictbookings.map((user) =>
+      user.populate("bookedBy").then((conflictbooking) => {
+        if (conflictbooking.bookedBy.role === "superAdmin") {
+          //Tell newbooking user that there is booking already.
+            console.log("Student");
+            res
+            .status(200)
+            .send(
+              "Student : inform them that there are already slots booked on those days"
+            );
+        } else if (conflictbooking.bookedBy.role === "admin") {
+          if (newBooking.bookedBy.role === "superAdmin") {
+            //Create the slot and inform the confict user(student or admin) vai email that your booking is cancelled
+          } else {
+            //Thst is conflict contains admin or student
+            console.log("Admin");
+            res
+              .status(200)
+              .send(
+                "Admin : inform them that there are already slots booked on those days"
+              );
+          }
+        } else {
+          res
+            .status(200)
+            .send(
+              "Student2 : inform them that there are already slots booked on those days"
+            );
+        }
+      })
+    );
+  } else {
+    //Create the slot
+    console.log("No conflict");
+    // try {
+    //   const bookRequest = await newBooking2.save();
+    //   res.status(200).json(bookRequest);
+    // } catch (err) {
+    //   res.status(500).send(err);
+    // }
   }
 };
 
@@ -60,20 +133,20 @@ const deleteBooking = async (req, res) => {
 
 const updateBooking = async (req, res) => {
   try {
-        const updatedStartTime= req.body.startTime;
-        const updatedEndTime= req.body.endTime;
-        const updatedReason= req.body.reason;
-        const result = await bookingModel.findByIdAndUpdate(
-          req.params.bookingId,
-          {
-            $set: {
-              startTime: updatedStartTime,
-              endTime: updatedEndTime,
-              reason: updatedReason,
-            },
-          },
-          { new: true }
-        );
+    const updatedStartTime = req.body.startTime;
+    const updatedEndTime = req.body.endTime;
+    const updatedReason = req.body.reason;
+    const result = await bookingModel.findByIdAndUpdate(
+      req.params.bookingId,
+      {
+        $set: {
+          startTime: updatedStartTime,
+          endTime: updatedEndTime,
+          reason: updatedReason,
+        },
+      },
+      { new: true }
+    );
     res.status(200).json(result);
   } catch (err) {
     res.status(500).send(err);
