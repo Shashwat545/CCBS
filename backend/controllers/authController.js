@@ -3,6 +3,7 @@
  */
 const createError = require("http-errors");
 const { OAuth2Client } = require("google-auth-library");
+const User = require("../models/userModel");
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -77,7 +78,18 @@ async function googleLogin(req, res, next) {
       // Storing credentials in session storage
       req.session.credentials = tokens;
 
-      res.sendStatus(201);
+      try {
+        const user = await User.findOne({
+          emailId: req.session.user.emailId,
+        }).exec();
+
+        return res.status(201).json({
+          emailId: req.session.user.emailId,
+          registered: Boolean(user),
+        });
+      } catch (err) {
+        return next(err);
+      }
     } catch (err) {
       // If authorization code was invalid, we return 401 Unauthorized.
       next(createError(401, "Invalid code grant request"));
