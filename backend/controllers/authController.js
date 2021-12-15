@@ -53,8 +53,26 @@ async function googleLogin(req, res, next) {
       // Request for an access token.
       const { tokens } = await oAuth2Client.getToken({ code, codeVerifier });
 
-      // TODO: add an entry in the User model with the current credentials, if
-      //       the current user is not already in the database.
+      oAuth2Client.setCredentials(tokens);
+      try {
+        // Get userinfo endpoint from OpenID Connect Discovery document
+        const oidConfRes = await oAuth2Client.request({
+          url: "https://accounts.google.com/.well-known/openid-configuration",
+          method: "GET",
+        });
+        const userinfoEndpoint = oidConfRes.data.userinfo_endpoint;
+
+        // Get the user information using the endpoint
+        const userinfo = await oAuth2Client.request({
+          url: userinfoEndpoint,
+          method: "GET",
+        });
+
+        // Attach the user's email address to the session
+        req.session.user = { emailId: userinfo.data.email };
+      } catch (err) {
+        return next(err);
+      }
 
       // Storing credentials in session storage
       req.session.credentials = tokens;
