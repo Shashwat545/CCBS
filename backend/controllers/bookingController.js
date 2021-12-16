@@ -1,8 +1,25 @@
 const bookingModel = require("../models/bookingModel");
 
 const getAllBookings = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const bookingFilter = {};
+  // If a booking's end time occurs before the start time specified in the
+  // request, then we filter them out.
+  if (req.body.startTime) {
+    bookingFilter["endTime"] = { $gte: req.body.startTime };
+  }
+  // Similarly, if a booking's start time is after the end time specified in the
+  // request, then we filter them out
+  if (req.body.endTime) {
+    bookingFilter["startTime"] = { $lte: req.body.endTime };
+  }
+
   try {
-    const bookings = await bookingModel.find();
+    const bookings = await bookingModel.find(bookingFilter);
     res.status(200).json(bookings);
   } catch (err) {
     res.status(500).send(err);

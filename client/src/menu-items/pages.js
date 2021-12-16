@@ -1,10 +1,9 @@
 // assets
 import { IconKey } from '@tabler/icons';
+import { IconUser } from '@tabler/icons';
 
 // constant
-const icons = {
-    IconKey
-};
+const icons = { IconKey, IconUser };
 
 // ==============================|| EXTRA PAGES MENU ITEMS ||============================== //
 
@@ -36,6 +35,13 @@ const pages = {
                     target: true
                 }
             ]
+        },
+        {
+            id: 'profile-page',
+            title: 'Profile Page',
+            type: 'item',
+            url: '/pages/profile-page',
+            icon: icons.IconUser
         }
     ]
 };

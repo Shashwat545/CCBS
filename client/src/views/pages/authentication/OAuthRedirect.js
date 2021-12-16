@@ -8,7 +8,6 @@ const OAuthRedirect = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const code = searchParams.get('code');
-    console.log(`Code: '${code}'`);
 
     useEffect(() => {
         loginGoogleUser(code)
