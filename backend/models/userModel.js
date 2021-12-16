@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
   emailId: {
-    type: mongoose.SchemaTypes.Email,
+    type: String,
     required: [true, "Please provide your email"],
     trim: true,
     unique: true,
