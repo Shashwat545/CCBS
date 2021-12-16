@@ -5,19 +5,44 @@ import { IconDashboard } from '@tabler/icons';
 const icons = { IconDashboard };
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
-
+const Commie = 'Community Centre';
+const Bookie = 'Booking System';
 const dashboard = {
     id: 'dashboard',
-    title: 'Dashboard',
+    title: ` ${Commie}  
+             ${Bookie}`,
     type: 'group',
     children: [
         {
-            id: 'default',
-            title: 'Dashboard',
-            type: 'item',
+            id: 'Explore',
+            title: 'Page no. 1',
+            type: 'collapse',
             url: '/dashboard/default',
             icon: icons.IconDashboard,
-            breadcrumbs: false
+            breadcrumbs: false,
+            children: [
+                {
+                    id: 'Page no. 2',
+                    title: 'Page no. 2',
+                    type: 'item',
+                    url: '',
+                    target: true
+                },
+                {
+                    id: 'Page no. 3',
+                    title: 'Page no. 3',
+                    type: 'item',
+                    url: '',
+                    target: true
+                },
+                {
+                    id: 'Page no. 4',
+                    title: 'Page no. 4',
+                    type: 'item',
+                    url: '',
+                    target: true
+                }
+            ]
         }
     ]
 };
