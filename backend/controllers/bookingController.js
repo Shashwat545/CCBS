@@ -1,5 +1,3 @@
-const userModel = require("../models/userModel");
-
 const bookingModel = require("../models/bookingModel");
 
 const getAllBookings = async (req, res) => {
@@ -19,57 +17,71 @@ const getOneBooking = async (req, res) => {
     res.status(500).send("Error in booking" + err);
   }
 };
-
+const sendBookingRequest = async (
+  isBooking,
+  booking,
+  res,
+  conflictbookingId = null
+) => {
+  try {
+    if (!isBooking) {
+      res
+        .status(200)
+        .send(
+          "There are already slots booked on those days so book other slots"
+        );
+    } else {
+      if (conflictbookingId != null)
+        await bookingModel.findByIdAndRemove(conflictbookingId);
+      const bookRequest = await bookingModel.create(booking);
+      res.status(200).json(bookRequest);
+    }
+  } catch (err) {
+    res.status(500).send(err);
+  }
+};
 const createBooking = async (req, res) => {
-  //1) see if there is a booking already in conflict with this
+  //Main Idea:-
+  /*1) see if there is a booking already in conflict with this
+  2) If there are bookings in conflict
+     a) if the user is an Admin (professors etc)
+         -> allow booking and send for approval
+         -> inform to the previously booked users via email
+     b) if the user is a SuperAdmin
+         -> allow booking without needing approval
+         -> inform to the previously booked users via email
+     c) if the user is a student
+         -> inform them that there are already slots booked on those days
+    If there is no conflict
+     -> allow booking and send for approval*/
 
-  //2) If there are bookings in conflict
-  //    a) if the user is an Admin (professors etc)
-  //        -> allow booking and send for approval
-  //        -> inform to the previously booked users via email
-  //    b) if the user is a SuperAdmin
-  //        -> allow booking without needing approval
-  //        -> inform to the previously booked users via email
-  //    c) if the user is a student
-  //        -> inform them that there are already slots booked on those days
-  //   If there is no conflict
-  //    -> allow booking and send for approval
+  //To create Dummy user for checking purpose
+  /* const user = new userModel({
+    emailId: "abc@iitbb.ac.in",
+    userName: "Ritik",
+    phoneNo: "8909876578",
+    role: "superAdmin",
+  });
+  user
+    .save()
+    .then(() => {
+      console.log("Dummy User Created");
+    })
+    .catch((err) => {
+      console.log(err);
+    });*/
 
-  // const user = new userModel({
-  //   emailId: "abc@iitbb.ac.in",
-  //   userName: "Ritik",
-  //   phoneNo: "8909876578",
-  //   role: "superAdmin",
-  // });
-  // user
-  //   .save()
-  //   .then(() => {
-  //     console.log("Dummy User Created");
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-
-  const user = await userModel.findById("61b9cfbfdd6335527c1831db");
-  // const newBooking2 = new bookingModel({
-  //   startTime: req.body.startTime,
-  //   endTime: req.body.endTime,
-  //   reason: req.body.reason,
-  //   bookedBy: user,
-  // });
-  // try {
-  //   const bookRequest = await newBooking.save();
-  //   res.status(200).json(bookRequest);
-  // } catch (err) {
-  //   res.status(500).send(err);
-  // }
+  //Createing a newBooking object
   const newBooking = {
     startTime: new Date(req.body.startTime),
     endTime: new Date(req.body.endTime),
     reason: req.body.reason,
-    bookedBy: user, //it will req.user that is created at the start of the session
+    bookedBy: req.user, //it will req.user that is created at the start of the session and for checking it will be replaced by user
   };
+  //This will find all the existing booking
   const allbookings = await bookingModel.find();
+
+  //This will fliter out the conflict containing booking
   const conflictbookings = allbookings.filter((booking) => {
     if (
       !(booking.startTime >= newBooking.endTime) &&
@@ -78,47 +90,38 @@ const createBooking = async (req, res) => {
       return booking;
     }
   });
+
+  let message =
+    "There are already slots booked on those days so book other slots";
+  //This will check for conflict booking and if it exist then it will populate the details of the booking and proceed according to main idea
   if (conflictbookings.length > 0) {
     conflictbookings.map((user) =>
       user.populate("bookedBy").then((conflictbooking) => {
-        if (conflictbooking.bookedBy.role === "superAdmin") {
-          //Tell newbooking user that there is booking already.
-            console.log("Student");
-            res
-            .status(200)
-            .send(
-              "Student : inform them that there are already slots booked on those days"
-            );
-        } else if (conflictbooking.bookedBy.role === "admin") {
-          if (newBooking.bookedBy.role === "superAdmin") {
-            //Create the slot and inform the confict user(student or admin) vai email that your booking is cancelled
+        if (newBooking.bookedBy.role === "superAdmin") {
+          if (conflictbooking.bookedBy.role === "superAdmin") {
+            //Tell new user that slots are already booked
+            sendBookingRequest(false, message, res);
           } else {
-            //Thst is conflict contains admin or student
-            console.log("Admin");
-            res
-              .status(200)
-              .send(
-                "Admin : inform them that there are already slots booked on those days"
-              );
+            //create booking and no need for approval and tell the other conflict user(admin or student) that your booking is cancelled
+            sendBookingRequest(true, newBooking, res, conflictbooking._id);
+          }
+        } else if (newBooking.bookedBy.role === "admin") {
+          if (conflictbooking.bookedBy.role === "student") {
+            //Create the booking and send for approval and also tell the conflict user(student) that your booking is cancelled
+            sendBookingRequest(true, newBooking, res, conflictbooking._id);
+          } else {
+            //Tell new user that slots are already booked
+            sendBookingRequest(false, message, res);
           }
         } else {
-          res
-            .status(200)
-            .send(
-              "Student2 : inform them that there are already slots booked on those days"
-            );
+          //Tell new user that slots are already booked
+          sendBookingRequest(false, message, res);
         }
       })
     );
   } else {
-    //Create the slot
-    console.log("No conflict");
-    // try {
-    //   const bookRequest = await newBooking2.save();
-    //   res.status(200).json(bookRequest);
-    // } catch (err) {
-    //   res.status(500).send(err);
-    // }
+    //Create the booking as there are no conflict and send for approval
+    sendBookingRequest(true, newBooking, res);
   }
 };
 
