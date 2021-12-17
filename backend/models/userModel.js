@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
   emailId: {
-    type: mongoose.SchemaTypes.Email,
+    type: String,
     required: [true, "Please provide your email"],
     trim: true,
     unique: true,
@@ -28,6 +28,7 @@ const userSchema = new Schema({
     type: String,
     required: false,
   },
+  bookings: [{ type: Schema.Types.ObjectId, ref: "booking" }],
 });
 
 module.exports = mongoose.model("User", userSchema);

@@ -1,8 +1,10 @@
 /**
  * @file Contollers for authentication. Session-based using OAuth 2.0
  */
+const { validationResult } = require("express-validator");
 const createError = require("http-errors");
 const { OAuth2Client } = require("google-auth-library");
+const User = require("../models/userModel");
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -39,6 +41,11 @@ async function getCodeChallenge(req, res, next) {
  * from the oAuthRedirect redirect URL, and have the correct authorization code.
  */
 async function googleLogin(req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const oAuth2Client = getOAuth2Client();
 
   // Get authorization code from request and code verifier from session storage
@@ -53,13 +60,42 @@ async function googleLogin(req, res, next) {
       // Request for an access token.
       const { tokens } = await oAuth2Client.getToken({ code, codeVerifier });
 
-      // TODO: add an entry in the User model with the current credentials, if
-      //       the current user is not already in the database.
+      oAuth2Client.setCredentials(tokens);
+      try {
+        // Get userinfo endpoint from OpenID Connect Discovery document
+        const oidConfRes = await oAuth2Client.request({
+          url: "https://accounts.google.com/.well-known/openid-configuration",
+          method: "GET",
+        });
+        const userinfoEndpoint = oidConfRes.data.userinfo_endpoint;
+
+        // Get the user information using the endpoint
+        const userinfo = await oAuth2Client.request({
+          url: userinfoEndpoint,
+          method: "GET",
+        });
+
+        // Attach the user's email address to the session
+        req.session.user = { emailId: userinfo.data.email };
+      } catch (err) {
+        return next(err);
+      }
 
       // Storing credentials in session storage
       req.session.credentials = tokens;
 
-      res.sendStatus(201);
+      try {
+        const user = await User.findOne({
+          emailId: req.session.user.emailId,
+        }).exec();
+
+        return res.status(201).json({
+          emailId: req.session.user.emailId,
+          registered: Boolean(user),
+        });
+      } catch (err) {
+        return next(err);
+      }
     } catch (err) {
       // If authorization code was invalid, we return 401 Unauthorized.
       next(createError(401, "Invalid code grant request"));

@@ -2,8 +2,15 @@ const express = require("express");
 const router = express.Router();
 
 const bookingController = require('../controllers/bookingController.js');
+const { isAuthenticated } = require("../controllers/authController");
+const getBookingSchema = require("../schemas/getBookingSchema");
 
-router.get('/', bookingController.getAllBookings)
+router.get(
+  "/",
+  isAuthenticated,
+  getBookingSchema,
+  bookingController.getAllBookings
+);
 
 router.get('/:bookingId', bookingController.getOneBooking)
 
