@@ -35,12 +35,12 @@ class MaintenanceForm extends Component {
                                     display: 'block',
                                     width: '60px',
                                     height: '20px',
-                                    borderRadius: '18px',
+                                    borderRadius: '10px',
                                     backgroundColor: '#1c89ff',
                                     border: 'solid 1px transparent',
                                     color: '#fff',
                                     fontSize: '12px',
-                                    fontWeight: '300',
+                                    fontWeight: 'Bold',
                                     cursor: 'pointer',
                                     transition: 'all .1s ease-in-out'
                                 }}
@@ -56,12 +56,12 @@ class MaintenanceForm extends Component {
                                     display: 'block',
                                     width: '60px',
                                     height: '20px',
-                                    borderRadius: '18px',
+                                    borderRadius: '10px',
                                     backgroundColor: '#FF0000',
                                     border: 'solid 1px transparent',
                                     color: '#fff',
                                     fontSize: '12px',
-                                    fontWeight: '300',
+                                    fontWeight: 'Bold',
                                     cursor: 'pointer',
                                     transition: 'all .1s ease-in-out'
                                 }}
@@ -74,25 +74,21 @@ class MaintenanceForm extends Component {
                             className="btn btn-primary btn-sm"
                             onClick={this.editOnClick}
                             style={{
-                                marginTop: '8px',
-                                position: 'relative',
-                                display: 'block',
-                                width: '60px',
-                                height: '20px',
-                                borderRadius: '5px',
-                                backgroundColor: '#1c89ff',
-                                border: 'solid 1px transparent',
-                                color: '#fff',
-                                fontSize: '12px',
-                                fontWeight: '300',
-                                cursor: 'pointer',
-                                transition: 'all .1s ease-in-out'
+                                background: '#0066A2',
+                                color: 'white',
+                                borderStyle: 'outset',
+                                borderColor: '#0066A2',
+                                height: '30px',
+                                width: '100px',
+                                font: 'bold15px arial,sans-serif',
+                                textShadow: 'none'
                             }}
                         >
                             Edit
                         </button>
                     )}
                 </div>
+                <br />
             </React.Fragment>
         );
     }
@@ -101,7 +97,7 @@ class MaintenanceForm extends Component {
         return (
             <React.Fragment>
                 <div className="form-group row">
-                    <label className="col-sm-2 col-form-label">Name</label>
+                    <label className="col-sm-2 col-form-label">Name:</label>
                     <div className="col-sm-10">
                         <label
                             type="text"
@@ -114,15 +110,17 @@ class MaintenanceForm extends Component {
                                 display: 'inline-block',
                                 border: '1px solid #ccc',
                                 borderRadius: '4px',
-                                boxSizing: 'border-box'
+                                boxSizing: 'border-box',
+                                fontWeight: 'Bold'
                             }}
                         >
                             {this?.props?.fields?.name}
                         </label>
                     </div>
                 </div>
+                <br />
                 <div className="form-group row">
-                    <label className="col-sm-2 col-form-label">Email</label>
+                    <label className="col-sm-2 col-form-label">Email:</label>
                     <div className="col-sm-10">
                         <label
                             type="text"
@@ -135,15 +133,17 @@ class MaintenanceForm extends Component {
                                 display: 'inline-block',
                                 border: '1px solid #ccc',
                                 borderRadius: '4px',
-                                boxSizing: 'border-box'
+                                boxSizing: 'border-box',
+                                fontWeight: 'Bold'
                             }}
                         >
                             {this?.props?.fields?.email}
                         </label>
                     </div>
                 </div>
+                <br />
                 <div className="form-group row">
-                    <label className="col-sm-2 col-form-label">Mobile No</label>
+                    <label className="col-sm-2 col-form-label">Mobile Number:</label>
                     <div className="col-sm-10">
                         <label
                             type="text"
@@ -156,7 +156,8 @@ class MaintenanceForm extends Component {
                                 display: 'inline-block',
                                 border: '1px solid #ccc',
                                 borderRadius: '4px',
-                                boxSizing: 'border-box'
+                                boxSizing: 'border-box',
+                                fontWeight: 'Bold'
                             }}
                         >
                             {this?.props?.fields?.mobile_no}
