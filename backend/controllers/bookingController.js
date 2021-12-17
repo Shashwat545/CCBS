@@ -1,25 +1,9 @@
 const bookingModel = require("../models/bookingModel");
+const userModel = require("../models/userModel");
 
 const getAllBookings = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const bookingFilter = {};
-  // If a booking's end time occurs before the start time specified in the
-  // request, then we filter them out.
-  if (req.body.startTime) {
-    bookingFilter["endTime"] = { $gte: req.body.startTime };
-  }
-  // Similarly, if a booking's start time is after the end time specified in the
-  // request, then we filter them out
-  if (req.body.endTime) {
-    bookingFilter["startTime"] = { $lte: req.body.endTime };
-  }
-
   try {
-    const bookings = await bookingModel.find(bookingFilter);
+    const bookings = await bookingModel.find();
     res.status(200).json(bookings);
   } catch (err) {
     res.status(500).send(err);
@@ -38,7 +22,8 @@ const sendBookingRequest = async (
   isBooking,
   booking,
   res,
-  conflictbookingId = null
+  conflictbookingId = null,
+  user = null
 ) => {
   try {
     if (!isBooking) {
@@ -51,6 +36,9 @@ const sendBookingRequest = async (
       if (conflictbookingId != null)
         await bookingModel.findByIdAndRemove(conflictbookingId);
       const bookRequest = await bookingModel.create(booking);
+      const bookingUser = await userModel.findById(user._id);
+      bookingUser.bookings.unshift(bookRequest);
+      bookingUser.save();
       res.status(200).json(bookRequest);
     }
   } catch (err) {
@@ -88,6 +76,8 @@ const createBooking = async (req, res) => {
       console.log(err);
     });*/
 
+  const user = await userModel.findById("61b9cfbfdd6335527c1831db");
+
   //Createing a newBooking object
   const newBooking = {
     startTime: new Date(req.body.startTime),
@@ -120,12 +110,24 @@ const createBooking = async (req, res) => {
             sendBookingRequest(false, message, res);
           } else {
             //create booking and no need for approval and tell the other conflict user(admin or student) that your booking is cancelled
-            sendBookingRequest(true, newBooking, res, conflictbooking._id);
+            sendBookingRequest(
+              true,
+              newBooking,
+              res,
+              conflictbooking._id,
+              req.user
+            );
           }
         } else if (newBooking.bookedBy.role === "admin") {
           if (conflictbooking.bookedBy.role === "student") {
             //Create the booking and send for approval and also tell the conflict user(student) that your booking is cancelled
-            sendBookingRequest(true, newBooking, res, conflictbooking._id);
+            sendBookingRequest(
+              true,
+              newBooking,
+              res,
+              conflictbooking._id,
+              req.user
+            );
           } else {
             //Tell new user that slots are already booked
             sendBookingRequest(false, message, res);
@@ -138,7 +140,7 @@ const createBooking = async (req, res) => {
     );
   } else {
     //Create the booking as there are no conflict and send for approval
-    sendBookingRequest(true, newBooking, res);
+    sendBookingRequest(true, newBooking, res, null, req.user);
   }
 };
 
