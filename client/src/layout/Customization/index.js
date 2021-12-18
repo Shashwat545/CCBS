@@ -1,4 +1,4 @@
 const Customization = () => {
 return <> {/*toggle button*/} </>;
 };
-export default Cutomization
+export default Customization
