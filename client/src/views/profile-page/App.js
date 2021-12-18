@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import FormikForm from './FormikForm';
 //import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
 
 function App() {
     const [fields, updateFields] = useState({
