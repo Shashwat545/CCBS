@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Stack from '@mui/material/Stack';
-import { gridSpacing } from 'store/constant';
 import { Grid } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -9,52 +8,23 @@ import TimePicker from '@mui/lab/TimePicker';
 import DatePicker from '@mui/lab/DatePicker';
 import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import MobileTimePicker from '@mui/lab/MobileTimePicker';
-import MuiAlert from '@mui/material/Alert';
-import { Snackbar } from '@mui/material';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/lab/AlertTitle';
 import { Button } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import DeviceIdentifier from './DeviceIdentifier';
-import { withStyles } from '@mui/material';
 import { Card, CardContent, Divider } from '@mui/material';
-
 export default function MaterialUIPickers() {
-    const styles = (muiBaseTheme) => ({
-        card: {
-            margin: 'auto',
-            transition: '0.3s',
-            boxShadow: '0 8px 40px -12px rgba(0,0,0,0.3)',
-            '&:hover': {
-                boxShadow: '0 16px 70px -12.125px rgba(0,0,0,0.3)'
-            }
-        },
-        media: {
-            paddingTop: '56.25%'
-        },
-        content: {
-            textAlign: 'left',
-            padding: muiBaseTheme.spacing.unit * 3
-        },
-        divider: {
-            margin: `${muiBaseTheme.spacing.unit * 3}px 0`
-        },
-        heading: {
-            fontWeight: 'bold'
-        },
-        subheading: {
-            lineHeight: 1.8
-        }
-    });
-
     var localDate = new Date();
-
-    const Alert = React.forwardRef(function Alert(props, ref) {
-        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-    });
-    var MessageForAlert1 = "End of Event Date can't be less than Start of Event Date";
-    var MessageForAlert = "Event End Time can't be less than Event Start time";
+    console.log('L', localDate);
     const [ReasonForRegistration, setReasonForRegistration] = React.useState('');
     const [DisplayNotificationDate, setDisplayNotificationDate] = React.useState(false);
     const [DisplayNotificationTime, setDisplayNotificationTime] = React.useState(false);
+    const [StartTimeTouch, setStartTimeTouch] = React.useState(false);
+    const [ButtonValidator, setButtonValidator] = React.useState(true);
+    const [EndTimeTouch, setEndTimeTouch] = React.useState(false);
+    const [StartDateTouch, setStartDateTouch] = React.useState(false);
+    const [EndDateTouch, setEndDateTouch] = React.useState(false);
     const [StartDateForEvent, setStartDateForEvent] = React.useState(
         new Date(
             localDate.getFullYear(),
@@ -85,60 +55,87 @@ export default function MaterialUIPickers() {
     };
 
     const ValidatorForDates = (StartDate, EndDate) => {
-        console.log('ok', EndDate.getDate(), StartDate.getDate());
-        const Possiblilty = EndDate.getDate() >= StartDate.getDate();
-        if (Possiblilty) {
-            if (EndDate.getDate() > StartDate.getDate());
-            setDisplayNotificationDate(false);
-
-            if (EndDate.getDate() === StartDate.getDate()) {
-                console.log('OK TIME CHECK');
-                ValidatorForTime(StartDate, EndDate);
+        var Possiblilty = true;
+        if (StartDate.getFullYear() > EndDate.getFullYear()) Possiblilty = false;
+        else if (StartDate.getFullYear() === EndDate.getFullYear()) {
+            if (StartDate.getMonth() > EndDate.getMonth()) Possiblilty = false;
+            else if (StartDate.getMonth() === EndDate.getMonth()) {
+                if (StartDate.getDate() > EndDate.getDate()) {
+                    Possiblilty = false;
+                } else {
+                    Possiblilty = true;
+                }
+            } else {
+                Possiblilty = true;
             }
         } else {
-            setDisplayNotificationDate(true);
-            setEndDateForEvent(StartDate);
+            Possiblilty = true;
         }
+        if (Possiblilty) {
+            setDisplayNotificationDate(false);
+        } else {
+            setDisplayNotificationDate(true);
+        }
+
+        ValidatorForTime(StartDate, EndDate, Possiblilty);
     };
-    const ValidatorForTime = (StartDate, EndDate) => {
-        var Possiblilty = true;
+    const ValidatorForTime = (StartDate, EndDate, Possiblilty) => {
         const StartHour = StartDate.getHours();
+        Possiblilty = true;
         const EndHour = EndDate.getHours();
         const StartMinute = StartDate.getMinutes();
         const EndMinute = EndDate.getMinutes();
         const StartSecond = StartDate.getHours();
         const EndSecond = EndDate.getMinutes();
-        if (StartDate.getDate() === EndDate.getDate())
+        console.log('TIME BITCHES=', StartDate, EndDate, StartDate.getDate() === EndDate.getDate());
+        if (StartDate.getDate() >= EndDate.getDate()) {
             if (StartHour > EndHour) Possiblilty = false;
             else if (StartMinute > EndMinute) Possiblilty = false;
             else if (StartSecond > EndSecond) Possiblilty = false;
-        if (Possiblilty) setDisplayNotificationDate(false);
+        }
+        if (Possiblilty) setDisplayNotificationTime(false);
         else {
             setDisplayNotificationTime(true);
-            console.log('SSS', 'StartDate= ', StartDate, 'EndDate =', EndDate);
-            setEndDateForEvent(StartDate);
         }
+        setButtonValidator(Possiblilty);
     };
 
     const SetHandleChangeForStartEvent = (newValue) => {
         setStartDateForEvent(newValue);
-        ValidatorForDates(newValue, EndDateForEvent);
+        setStartDateTouch(true);
+        setEndDateTouch(false);
+
+        if (newValue && EndDateForEvent) ValidatorForDates(newValue, EndDateForEvent);
     };
     const SetHandleChangeForEndEvent = (newValue) => {
         setEndDateForEvent(newValue);
-        ValidatorForDates(StartDateForEvent, newValue);
+        setEndDateTouch(true);
+        setStartDateTouch(false);
+        if (newValue && StartDateForEvent) ValidatorForDates(StartDateForEvent, newValue);
+    };
+    const SetHandleChangeForStartEventForTime = (newValue) => {
+        setStartDateForEvent(newValue);
+        setStartTimeTouch(true);
+        setEndTimeTouch(false);
+
+        if (newValue && EndDateForEvent) ValidatorForDates(newValue, EndDateForEvent);
+    };
+    const SetHandleChangeForEndEventForTime = (newValue) => {
+        setEndDateForEvent(newValue);
+        setEndTimeTouch(true);
+        setStartTimeTouch(false);
+        if (newValue && StartDateForEvent) ValidatorForDates(StartDateForEvent, newValue);
     };
     const handleOnchangeTextBox = (event) => {
-        console.log(event.target.value);
+        console.log('Pinch of salT', event.target.value);
         setReasonForRegistration(event.target.value);
     };
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DeviceIdentifier isMobile={true} isTablet={true}>
                 <Grid container justify="center">
-                    <Card className={styles.card} style={{ display: 'inline-block' }}>
-                        {console.log('MOBILE MODE ACTIVATED')}
-                        <CardContent className={styles.content}>
+                    <Card style={{ display: 'inline-block' }}>
+                        <CardContent>
                             <Stack spacing={4}>
                                 <MobileDatePicker
                                     label="Start Date For the event"
@@ -148,6 +145,18 @@ export default function MaterialUIPickers() {
                                     variant="outlined"
                                     renderInput={(params) => <TextField {...params} />}
                                 />
+                                {DisplayNotificationDate && StartDateTouch ? (
+                                    <>
+                                        {' '}
+                                        <Alert sx={{ mt: 0, mx: 'auto', mb: 0, border: 'blue' }} severity="error">
+                                            <AlertTitle>Error</AlertTitle>
+                                            Start Date is more than End Date
+                                        </Alert>
+                                        {console.log(DisplayNotificationDate, StartDateTouch)}{' '}
+                                    </>
+                                ) : (
+                                    <></>
+                                )}
                                 <MobileDatePicker
                                     label="End Date For the event"
                                     inputFormat="dd/MM/yyyy"
@@ -156,27 +165,64 @@ export default function MaterialUIPickers() {
                                     variant="outlined"
                                     renderInput={(params) => <TextField {...params} />}
                                 />
-
+                                {DisplayNotificationDate && EndDateTouch ? (
+                                    <>
+                                        {' '}
+                                        <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                            <AlertTitle>Error</AlertTitle>
+                                            End Date is less than Start Date
+                                        </Alert>
+                                        {console.log(DisplayNotificationDate, 'ok', EndDateTouch)}
+                                    </>
+                                ) : (
+                                    <></>
+                                )}
                                 <MobileTimePicker
                                     label="Start Time for the event"
                                     value={StartDateForEvent}
-                                    onChange={SetHandleChangeForStartEvent}
+                                    onChange={SetHandleChangeForStartEventForTime}
                                     renderInput={(params) => <TextField {...params} />}
                                 />
+                                {DisplayNotificationTime && StartTimeTouch ? (
+                                    <>
+                                        {' '}
+                                        <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                            <AlertTitle>Error</AlertTitle>
+                                            Start Time more than End Time
+                                        </Alert>
+                                        {console.log(DisplayNotificationTime, 'ok start Time', EndDateTouch)}
+                                    </>
+                                ) : (
+                                    <></>
+                                )}{' '}
                                 <MobileTimePicker
                                     label="End Time for the event"
                                     value={EndDateForEvent}
-                                    onChange={SetHandleChangeForEndEvent}
+                                    onChange={SetHandleChangeForEndEventForTime}
                                     renderInput={(params) => <TextField {...params} />}
                                 />
+                                {DisplayNotificationTime && EndTimeTouch ? (
+                                    <>
+                                        {' '}
+                                        <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                            <AlertTitle>Error</AlertTitle>
+                                            End Time is less than Start Time
+                                        </Alert>
+                                        {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)}
+                                    </>
+                                ) : (
+                                    <></>
+                                )}{' '}
+                                {console.log('TEXT FOR MOBILE =', ReasonForRegistration)}
                                 <TextField
                                     id="outlined-textarea"
                                     onChange={(e) => handleOnchangeTextBox(e)}
                                     label="Reason for booking slot"
                                     variant="outlined"
                                     multiline
+                                    value={ReasonForRegistration}
                                 />
-                                <Divider className={styles.divider} dark />
+                                <Divider />
                                 <ListItem style={{ justifyContent: 'center' }}>
                                     <Button variant="contained" href="www.iitbbs.ac.in" style={{ maxWidth: '500px', minWidth: '300px' }}>
                                         Submit
@@ -186,125 +232,130 @@ export default function MaterialUIPickers() {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Snackbar
-                    anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'center'
-                    }}
-                    open={DisplayNotificationDate}
-                    autoHideDuration={6000}
-                    onClose={handleClose}
-                >
-                    <Alert onClose={handleClose} severity="error" sx={{ width: '60%' }}>
-                        {MessageForAlert1}
-                    </Alert>
-                </Snackbar>
-                <Snackbar
-                    anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'center'
-                    }}
-                    open={DisplayNotificationTime}
-                    autoHideDuration={6000}
-                    onClose={handleCloseTime}
-                >
-                    <Alert onClose={handleCloseTime} severity="error" sx={{ width: '60%' }}>
-                        {MessageForAlert}
-                    </Alert>
-                </Snackbar>
             </DeviceIdentifier>
-            {console.log(window.screen.width)}
             <DeviceIdentifier isDesktop={true}>
-                <Card className={styles.card} style={{ display: 'inline-block' }}>
-                    <CardContent className={styles.content}>
-                        <Stack direction="column" spacing={4}>
-                            <ListItem>
-                                <Grid container spacing={gridSpacing}>
-                                    <Grid item xs={6}>
-                                        <DatePicker
-                                            label="Start Date For the event"
-                                            inputFormat="dd/MM/yyyy"
-                                            value={StartDateForEvent}
-                                            onChange={SetHandleChangeForStartEvent}
-                                            variant="outlined"
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
+                <Grid container justify="center">
+                    <Card style={{ width: '750px' }}>
+                        <CardContent>
+                            <Stack direction="column" spacing={3} style={{ width: 'auto', backgroundColor: 'white' }}>
+                                <ListItem>
+                                    <Grid container spacing={7}>
+                                        <Grid item xs={6} md={6}>
+                                            <DatePicker
+                                                label="Start Date For the event"
+                                                inputFormat="dd/MM/yyyy"
+                                                value={StartDateForEvent}
+                                                onChange={SetHandleChangeForStartEvent}
+                                                variant="outlined"
+                                                renderInput={(params) => <TextField {...params} />}
+                                            />
+                                            {DisplayNotificationDate && StartDateTouch ? (
+                                                <>
+                                                    {' '}
+                                                    <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                        <AlertTitle>Error</AlertTitle>
+                                                        Start Date is more than End Date
+                                                    </Alert>
+                                                    {console.log(DisplayNotificationDate, StartDateTouch)}{' '}
+                                                </>
+                                            ) : (
+                                                <></>
+                                            )}
+
+                                            {console.log(TextField)}
+                                        </Grid>
+                                        <Grid item md={6} xs={6}>
+                                            <DatePicker
+                                                label="End Date For the event"
+                                                inputFormat="dd/MM/yyyy"
+                                                value={EndDateForEvent}
+                                                onChange={SetHandleChangeForEndEvent}
+                                                variant="outlined"
+                                                renderInput={(params) => <TextField {...params} />}
+                                            />
+
+                                            {DisplayNotificationDate && EndDateTouch ? (
+                                                <>
+                                                    {' '}
+                                                    <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                        <AlertTitle>Error</AlertTitle>
+                                                        End Date is less than Start Date
+                                                    </Alert>
+                                                    {console.log(DisplayNotificationDate, 'ok', EndDateTouch)}
+                                                </>
+                                            ) : (
+                                                <></>
+                                            )}
+                                        </Grid>
+                                        <Grid item xs={6} md={6}>
+                                            <TimePicker
+                                                label="Start Time for the event"
+                                                value={StartDateForEvent}
+                                                onChange={SetHandleChangeForStartEventForTime}
+                                                renderInput={(params) => <TextField {...params} />}
+                                            />
+                                            {DisplayNotificationTime && StartTimeTouch ? (
+                                                <>
+                                                    {' '}
+                                                    <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                        <AlertTitle>Error</AlertTitle>
+                                                        Start Time more than End time
+                                                    </Alert>
+                                                    {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)}
+                                                </>
+                                            ) : (
+                                                <></>
+                                            )}{' '}
+                                        </Grid>
+                                        <Grid item xs={6} md={6}>
+                                            <TimePicker
+                                                label="End Time for the event"
+                                                value={EndDateForEvent}
+                                                onChange={SetHandleChangeForEndEventForTime}
+                                                renderInput={(params) => <TextField {...params} />}
+                                            />
+                                            {DisplayNotificationTime && EndTimeTouch ? (
+                                                <>
+                                                    {' '}
+                                                    <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                        <AlertTitle>Error</AlertTitle>
+                                                        End Time is less than Start Time
+                                                    </Alert>
+                                                    {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)}
+                                                </>
+                                            ) : (
+                                                <></>
+                                            )}{' '}
+                                        </Grid>
                                     </Grid>
-                                    <Grid item xs={6}>
-                                        <DatePicker
-                                            label="End Date For the event"
-                                            inputFormat="dd/MM/yyyy"
-                                            value={EndDateForEvent}
-                                            onChange={SetHandleChangeForEndEvent}
-                                            variant="outlined"
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <TimePicker
-                                            label="Start Time for the event"
-                                            value={StartDateForEvent}
-                                            onChange={SetHandleChangeForStartEvent}
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <TimePicker
-                                            label="End Time for the event"
-                                            value={EndDateForEvent}
-                                            onChange={SetHandleChangeForEndEvent}
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </ListItem>
-                            <ListItem>
-                                <Grid container spacing={gridSpacing}>
-                                    <Grid item xs={11}>
-                                        <TextField
-                                            id="outlined-textarea"
-                                            fullWidth
-                                            label="Reason for booking slot"
-                                            variant="outlined"
-                                            multiline
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </ListItem>
-                            <ListItem style={{ justifyContent: 'center' }}>
-                                <Button variant="contained" href="api/v1/booking" style={{ maxWidth: '500px', minWidth: '300px' }}>
-                                    Submit
-                                </Button>
-                            </ListItem>
-                        </Stack>
-                    </CardContent>
-                </Card>
-                <Snackbar
-                    anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'center'
-                    }}
-                    open={DisplayNotificationDate}
-                    autoHideDuration={6000}
-                    onClose={handleClose}
-                >
-                    <Alert onClose={handleClose} severity="error" sx={{ width: '60%' }}>
-                        {MessageForAlert1}
-                    </Alert>
-                </Snackbar>
-                <Snackbar
-                    anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'center'
-                    }}
-                    open={DisplayNotificationTime}
-                    autoHideDuration={6000}
-                    onClose={handleCloseTime}
-                >
-                    <Alert onClose={handleCloseTime} severity="error" sx={{ width: '60%' }}>
-                        {MessageForAlert}
-                    </Alert>
-                </Snackbar>
+                                </ListItem>
+                                <ListItem>
+                                    {console.log('TEXT FOR DESKTOP =', ReasonForRegistration)}
+                                    <TextField
+                                        id="outlined-textarea"
+                                        onChange={(e) => handleOnchangeTextBox(e)}
+                                        value={ReasonForRegistration}
+                                        label="Reason for booking slot"
+                                        variant="outlined"
+                                        multiline
+                                        style={{ width: '97%' }}
+                                    />
+                                </ListItem>
+                                <Divider dark />
+                                <ListItem style={{ justifyContent: 'center' }}>
+                                    <Button
+                                        variant="contained"
+                                        href="www.iitbbs.ac.in"
+                                        style={{ maxWidth: '500px', minWidth: '300px' }}
+                                        disabled={!ButtonValidator}
+                                    >
+                                        Submit
+                                    </Button>
+                                </ListItem>
+                            </Stack>
+                        </CardContent>
+                    </Card>
+                </Grid>
             </DeviceIdentifier>
         </LocalizationProvider>
     );
