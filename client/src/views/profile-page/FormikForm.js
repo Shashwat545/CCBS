@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { Component } from 'react';
 import { withFormik, Form, Field } from 'formik';
+import './Form.css';
 
 const form_id = 'form_id';
 class MaintenanceForm extends Component {
@@ -26,19 +27,20 @@ class MaintenanceForm extends Component {
                 <div className="form-statusbar">
                     {this?.props?.status?.edit ? (
                         <React.Fragment>
-                            <button className="btn btn-primary btn-sm" type="submit" form={form_id}>
+                            <button className="save_button" type="submit" form={form_id}>
                                 Save
                             </button>
-                            <button className="btn btn-danger btn-sm" onClick={this.cancelOnClick} style={{ marginLeft: '8px' }}>
+                            <button className="cancel_button" onClick={this.cancelOnClick}>
                                 Cancel
                             </button>
                         </React.Fragment>
                     ) : (
-                        <button className="btn btn-primary btn-sm" onClick={this.editOnClick}>
+                        <button className="edit_button" onClick={this.editOnClick}>
                             Edit
                         </button>
                     )}
                 </div>
+                <br />
             </React.Fragment>
         );
     }
@@ -47,25 +49,27 @@ class MaintenanceForm extends Component {
         return (
             <React.Fragment>
                 <div className="form-group row">
-                    <label className="col-sm-2 col-form-label">Name</label>
+                    <label className="col-sm-2 col-form-label">Name:</label>
                     <div className="col-sm-10">
-                        <label type="text" name="name" className="form-control">
+                        <label type="text" name="name" className="name_field">
                             {this?.props?.fields?.name}
                         </label>
                     </div>
                 </div>
+                <br />
                 <div className="form-group row">
-                    <label className="col-sm-2 col-form-label">Email</label>
+                    <label className="col-sm-2 col-form-label">Email:</label>
                     <div className="col-sm-10">
-                        <label type="text" name="brand_name" className="form-control">
+                        <label type="text" name="brand_name" className="email_field">
                             {this?.props?.fields?.email}
                         </label>
                     </div>
                 </div>
+                <br />
                 <div className="form-group row">
-                    <label className="col-sm-2 col-form-label">Mobile No</label>
+                    <label className="col-sm-2 col-form-label">Mobile Number:</label>
                     <div className="col-sm-10">
-                        <label type="text" name="device_type" className="form-control">
+                        <label type="text" name="device_type" className="mobileNumber_field">
                             {this?.props?.fields?.mobile_no}
                         </label>
                     </div>
@@ -80,19 +84,19 @@ class MaintenanceForm extends Component {
                 <div className="form-group row">
                     <label className="col-sm-2 col-form-label">Name</label>
                     <div className="col-sm-10">
-                        <Field type="text" name="name" className="form-control" placeholder="Name" />
+                        <Field type="text" name="name" className="name_input" placeholder="Name" />
                     </div>
                 </div>
                 <div className="form-group row">
                     <label className="col-sm-2 col-form-label">Email</label>
                     <div className="col-sm-10">
-                        <Field type="text" name="email" className="form-control" placeholder="Email" style={{ width: '200px' }} />
+                        <Field type="text" name="email" className="email_input" placeholder="Email" />
                     </div>
                 </div>
                 <div className="form-group row">
                     <label className="col-sm-2 col-form-label">Mobile No</label>
                     <div className="col-sm-10">
-                        <Field type="text" name="mobile_no" className="form-control" placeholder="Mobile No" />
+                        <Field type="text" name="mobile_no" className="mobileNumber_input" placeholder="Mobile No" />
                     </div>
                 </div>
             </React.Fragment>

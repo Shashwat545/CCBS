@@ -31,7 +31,7 @@ const ProfilePage = () => {
                     <SubCard>
                         <Grid container direction="column" spacing={1}>
                             <Grid item align="center">
-                                <img src={User_DP} alt="User Profile" width="100px" />
+                                <img src={User_DP} alt="User Profile" width="100px" style={{ borderRadius: '50%' }} />
                                 <MuiTypography variant="h1" gutterBottom></MuiTypography>
                             </Grid>
                             <Grid item>
