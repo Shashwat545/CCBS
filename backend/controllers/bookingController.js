@@ -1,3 +1,5 @@
+const { validationResult } = require("express-validator");
+
 const bookingModel = require("../models/bookingModel");
 const userModel = require("../models/userModel");
 
