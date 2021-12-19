@@ -1,5 +1,7 @@
 const { validationResult } = require("express-validator");
+
 const bookingModel = require("../models/bookingModel");
+const userModel = require("../models/userModel");
 
 const getAllBookings = async (req, res) => {
   const errors = validationResult(req);
@@ -35,11 +37,13 @@ const getOneBooking = async (req, res) => {
     res.status(500).send("Error in booking" + err);
   }
 };
+
 const sendBookingRequest = async (
   isBooking,
   booking,
   res,
-  conflictbookingId = null
+  conflictbookingId = null,
+  user = null
 ) => {
   try {
     if (!isBooking) {
@@ -52,6 +56,9 @@ const sendBookingRequest = async (
       if (conflictbookingId != null)
         await bookingModel.findByIdAndRemove(conflictbookingId);
       const bookRequest = await bookingModel.create(booking);
+      const bookingUser = await userModel.findById(user._id);
+      bookingUser.bookings.unshift(bookRequest);
+      bookingUser.save();
       res.status(200).json(bookRequest);
     }
   } catch (err) {
@@ -121,12 +128,24 @@ const createBooking = async (req, res) => {
             sendBookingRequest(false, message, res);
           } else {
             //create booking and no need for approval and tell the other conflict user(admin or student) that your booking is cancelled
-            sendBookingRequest(true, newBooking, res, conflictbooking._id);
+            sendBookingRequest(
+              true,
+              newBooking,
+              res,
+              conflictbooking._id,
+              req.user
+            );
           }
         } else if (newBooking.bookedBy.role === "admin") {
           if (conflictbooking.bookedBy.role === "student") {
             //Create the booking and send for approval and also tell the conflict user(student) that your booking is cancelled
-            sendBookingRequest(true, newBooking, res, conflictbooking._id);
+            sendBookingRequest(
+              true,
+              newBooking,
+              res,
+              conflictbooking._id,
+              req.user
+            );
           } else {
             //Tell new user that slots are already booked
             sendBookingRequest(false, message, res);
@@ -139,7 +158,7 @@ const createBooking = async (req, res) => {
     );
   } else {
     //Create the booking as there are no conflict and send for approval
-    sendBookingRequest(true, newBooking, res);
+    sendBookingRequest(true, newBooking, res, null, req.user);
   }
 };
 
