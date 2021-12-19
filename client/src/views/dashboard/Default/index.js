@@ -11,18 +11,9 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <Grid container spacing={gridSpacing}>
-            <DeviceIdentifier isMobile={true} isTablet={true}>
-                <Grid item xs={12}>
-                    <Form />
-                </Grid>
-            </DeviceIdentifier>
-            <DeviceIdentifier isDesktop={true}>
-                <Grid item xs={6}>
-                    <Form />
-                </Grid>
-            </DeviceIdentifier>
-        </Grid>
+        <>
+            <Form />
+        </>
     );
 };
 
