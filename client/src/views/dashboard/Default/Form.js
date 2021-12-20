@@ -87,11 +87,18 @@ export default function MaterialUIPickers() {
         const EndMinute = EndDate.getMinutes();
         const StartSecond = StartDate.getHours();
         const EndSecond = EndDate.getMinutes();
-        console.log('TIME BITCHES=', StartDate, EndDate, StartDate.getDate() === EndDate.getDate());
+        console.log('TIME =', StartDate, EndDate, StartDate.getDate() === EndDate.getDate());
         if (StartDate.getDate() >= EndDate.getDate()) {
             if (StartHour > EndHour) Possiblilty = false;
-            else if (StartMinute > EndMinute) Possiblilty = false;
-            else if (StartSecond > EndSecond) Possiblilty = false;
+            else if (StartHour === EndHour) {
+                if (StartMinute > EndMinute) Possiblilty = false;
+                else if (StartMinute === EndMinute) {
+                    if (StartSecond >= EndSecond) Possiblilty = false;
+                    else Possiblilty = true;
+                } else {
+                    Possiblilty = true;
+                }
+            } else Possiblilty = true;
         }
         if (Possiblilty) setDisplayNotificationTime(false);
         else {
