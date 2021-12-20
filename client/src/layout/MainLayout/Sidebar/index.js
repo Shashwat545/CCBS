@@ -22,12 +22,17 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
 
     const drawer = (
         <>
-            <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-                <Box sx={{ display: 'flex', p: 2, mx: 'auto' }}>
-                    <LogoSection />
-                </Box>
-            </Box>
             <BrowserView>
+                <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                    <Box sx={{ display: 'flex', p: 2, mx: 'auto' }}>
+                        <span>
+                            &nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                        <LogoSection />
+                    </Box>
+                </Box>
+
                 <PerfectScrollbar
                     component="div"
                     style={{
@@ -41,6 +46,12 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
                 </PerfectScrollbar>
             </BrowserView>
             <MobileView>
+                <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                    <Box sx={{ display: 'space-evenly', p: 2, mx: 'auto' }}>
+                        <LogoSection />
+                    </Box>
+                </Box>
+
                 <Box sx={{ px: 2 }}>
                     <MenuList />
                     <MenuCard />
