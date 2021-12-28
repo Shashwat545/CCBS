@@ -94,7 +94,9 @@ const createBooking = async (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-    });*/
+    });
+     req.user = await userModel.findById("61b9d1dd4ce21a9d62a0f2a2");*/
+
 
   //Createing a newBooking object
   const newBooking = {
@@ -122,6 +124,12 @@ const createBooking = async (req, res) => {
   if (conflictbookings.length > 0) {
     conflictbookings.map((user) =>
       user.populate("bookedBy").then((conflictbooking) => {
+        let isConflictBookingApproved = false,
+          i = 0;
+        for (const admin in conflictbooking.approvedBy) {
+          if (conflictbooking.approvedBy[admin] === "accepted") i++;
+        }
+        isConflictBookingApproved = i === 3;
         if (newBooking.bookedBy.role === "superAdmin") {
           if (conflictbooking.bookedBy.role === "superAdmin") {
             //Tell new user that slots are already booked
@@ -137,7 +145,10 @@ const createBooking = async (req, res) => {
             );
           }
         } else if (newBooking.bookedBy.role === "admin") {
-          if (conflictbooking.bookedBy.role === "student") {
+          //If conflict booking is not approved till now then we have to create this booking
+          if (!isConflictBookingApproved)
+            sendBookingRequest(true, newBooking, res, null, req.user);
+          else if (conflictbooking.bookedBy.role === "student") {
             //Create the booking and send for approval and also tell the conflict user(student) that your booking is cancelled
             sendBookingRequest(
               true,
@@ -151,8 +162,11 @@ const createBooking = async (req, res) => {
             sendBookingRequest(false, message, res);
           }
         } else {
+          //If conflict booking is not approved till now then we have to create this booking
+          if (!isConflictBookingApproved)
+            sendBookingRequest(true, newBooking, res, null, req.user);
           //Tell new user that slots are already booked
-          sendBookingRequest(false, message, res);
+          else sendBookingRequest(false, message, res);
         }
       })
     );
