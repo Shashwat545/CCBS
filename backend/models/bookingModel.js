@@ -21,10 +21,23 @@ const bookingSchema = new Schema({
     ref: "User",
     required: true,
   },
-  isApproved: {
-    type : Boolean,
-    default : false
-  }
+  approvedBy: {
+    superAdmin1: {
+      type: String,
+      enum: ["accepted", "pending", "rejected"],
+      default: "pending",
+    },
+    superAdmin2: {
+      type: String,
+      enum: ["accepted", "pending", "rejected"],
+      default: "pending",
+    },
+    superAdmin3: {
+      type: String,
+      enum: ["accepted", "pending", "rejected"],
+      default: "pending",
+    },
+  },
 });
 
 module.exports = mongoose.model("booking", bookingSchema);
