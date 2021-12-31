@@ -9,10 +9,12 @@ import LogoSection from '../LogoSection';
 import SearchSection from './SearchSection';
 import ProfileSection from './ProfileSection';
 import NotificationSection from './NotificationSection';
-
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 // assets
 import { IconMenu2 } from '@tabler/icons';
-
+import { IconChevronRight } from '@tabler/icons';
+import navigation from '../../../menu-items';
+import DashBoard from '../../../menu-items/dashboard';
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
 const Header = ({ handleLeftDrawerToggle }) => {
@@ -23,14 +25,14 @@ const Header = ({ handleLeftDrawerToggle }) => {
             {/* logo & toggler button */}
             <Box
                 sx={{
-                    width: 228,
+                    width: 128,
                     display: 'flex',
                     [theme.breakpoints.down('md')]: {
                         width: 'auto'
                     }
                 }}
             >
-                <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
+                <Box component="span" sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1 }}>
                     <LogoSection />
                 </Box>
                 <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden' }}>
@@ -39,7 +41,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                         sx={{
                             ...theme.typography.commonAvatar,
                             ...theme.typography.mediumAvatar,
-                            transition: 'all .2s ease-in-out',
+                            transition: 'all 0.2s ease-in-out',
                             background: theme.palette.secondary.light,
                             color: theme.palette.secondary.dark,
                             '&:hover': {
@@ -54,14 +56,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     </Avatar>
                 </ButtonBase>
             </Box>
-
-            {/* header search */}
-            
             <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ flexGrow: 1 }} />
-
-            {/* notification & profile */}
-            
             <ProfileSection />
         </>
     );

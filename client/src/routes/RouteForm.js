@@ -5,7 +5,7 @@ import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 
 // profile page routing
-const FormPage = Loadable(lazy(() => import('views/dashboard/Default/Form')));
+const FormPage = Loadable(lazy(() => import('../views/dashboard/Default/Form')));
 
 // ==============================|| PROFILE PAGE ROUTING ||============================== //
 

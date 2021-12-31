@@ -13,8 +13,10 @@ const Logo = () => {
     const theme = useTheme();
 
     return (
-       
-        <img src={logo} alt="IITBBS" width="70" height="70"  />
+        /**
+         * if you want to use image instead of svg uncomment following, and comment out <svg> element.
+         */
+        <img src={logo} alt="IITBBS" width="70" height="70" />
     );
 };
 
