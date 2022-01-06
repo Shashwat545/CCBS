@@ -9,6 +9,8 @@ exports.postCreateUser = async (req, res) => {
     rollNo: req.body.rollNo || null,
   });
   await newUser.save();
+  req.user=newUser;
+  console.log(req.user);
   res.status(200).json({
     status: "User Created",
     newUser,
