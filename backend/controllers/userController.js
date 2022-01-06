@@ -11,7 +11,7 @@ exports.postCreateUser = async (req, res) => {
   await newUser.save();
   res.status(200).json({
     status: "User Created",
-    newuser,
+    newUser,
   });
 };
 

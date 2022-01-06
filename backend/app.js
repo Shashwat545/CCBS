@@ -8,6 +8,7 @@ const app = express();
 
 const authRouter = require("./routes/authRoutes");
 const bookingRouter = require("./routes/bookingRoutes");
+const userRouter=require('./routes/userRoutes');
 
 const SECRET_KEY = process.env.CCBS_SECRET_KEY;
 const MONGO_URL = process.env.mongo_url;
@@ -51,5 +52,6 @@ app.use(
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/bookings", bookingRouter);
+app.use("/api/v1/user", userRouter);
 
 module.exports = app;
