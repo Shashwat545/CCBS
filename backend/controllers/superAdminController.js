@@ -37,6 +37,23 @@ exports.getApprovalStatus = async (req, res) => {
             userBooking.approvedBy[superAdmin] = "accepted";
             console.log("Send Email!!!!");
             //send a mail that you booking is confirmed
+
+            //Deleting all other booking which are conflicted
+            //This will find all the existing booking
+            const allbookings = await bookingModel.find();
+
+            //This will fliter out the conflict containing booking
+            const conflictbookings = allbookings.filter((booking) => {
+              if (
+                !(booking.startTime >= newBooking.endTime) &&
+                !(booking.endTime <= newBooking.startTime)
+              ) {
+                return booking;
+              }
+            });
+            conflictbookings.map((booking) => {
+              await bookingModel.findByIdAndRemove(booking._id);
+            });
           } else userBooking.approvedBy[superAdmin] = "accepted";
           break;
         }
