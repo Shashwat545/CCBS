@@ -13,13 +13,12 @@ const dashboard = {
              ${Bookie}`,
     type: 'group',
     children: [
-        { id: 'Explore', title: 'User Profile', type: 'item', url: '/dashboard/default', icon: ArrowForwardIosIcon, breadcrumbs: false },
+        { id: 'Explore', title: 'User Profile', type: 'item', url: '/pages/profile-page', icon: ArrowForwardIosIcon, breadcrumbs: false },
         {
             id: 'Slot Booking',
             title: 'Slot Booking',
             type: 'item',
-            url: '',
-            target: true,
+            url: '/pages/form-registration',
             icon: ArrowForwardIosIcon,
             breadcrumbs: false
         },
@@ -27,8 +26,7 @@ const dashboard = {
             id: 'Pending Approvals',
             title: 'Pending Approvals',
             type: 'item',
-            url: '',
-            target: true,
+            url: '/pages/AdminPage',
             icon: ArrowForwardIosIcon,
             breadcrumbs: false
         }
