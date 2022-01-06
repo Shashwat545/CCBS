@@ -46,7 +46,8 @@ exports.getApprovalStatus = async (req, res) => {
             const conflictbookings = allbookings.filter((booking) => {
               if (
                 !(booking.startTime >= newBooking.endTime) &&
-                !(booking.endTime <= newBooking.startTime)
+                !(booking.endTime <= newBooking.startTime) &&
+                booking._id !== bookingId
               ) {
                 return booking;
               }
