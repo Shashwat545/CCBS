@@ -16,10 +16,17 @@ exports.getApprovalStatus = async (req, res) => {
 
   if (userRole !== "superAdmin")
     res.status(401).send("You are not authorized to this");
+  const bookingId = req.params.bookingId;
   //Tell user that your booking{bookingId} is cancelled via mail and delete the booking also from database
-  if (status === "reject") userBooking.approvedBy[pendingIndex] = "rejected";
-  else {
-    const bookingId = req.params.bookingId;
+  if (status === "reject") {
+    userBooking.approvedBy[pendingIndex] = "rejected";
+    try {
+      await bookingModel.findByIdAndRemove(req.params.bookingId);
+      res.status(200).send("Booking deleted successfully");
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  } else {
     try {
       const userBooking = await bookingModel.findById(bookingId);
       let pendingIndex = 0;
