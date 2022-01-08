@@ -151,237 +151,235 @@ export default function MaterialUIPickers() {
                     {' '}
                     <Typography variant="h1">Slot Booking</Typography>
                 </div>
-                <Grid item xs={3}>
+                <Grid item sx={{ backgroundColor: '', width: '100%' }}>
                     <DeviceIdentifier isMobile={true} isTablet={true}>
-                        <Grid container justify="center">
-                            <Card style={{ display: 'inline-block' }}>
-                                <CardContent>
-                                    <Stack spacing={4}>
-                                        <MobileDatePicker
-                                            label="Start Date For the event"
-                                            inputFormat="dd/MM/yyyy"
-                                            value={StartDateForEvent}
-                                            onChange={SetHandleChangeForStartEvent}
-                                            variant="outlined"
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                        {DisplayNotificationDate && StartDateTouch ? (
-                                            <>
-                                                {' '}
-                                                <Alert sx={{ mt: 0, mx: 'auto', mb: 0, border: 'blue' }} severity="error">
-                                                    <AlertTitle>Error</AlertTitle>
-                                                    Start Date is more than End Date
-                                                </Alert>
-                                                {console.log(DisplayNotificationDate, StartDateTouch)}{' '}
-                                            </>
-                                        ) : (
-                                            <></>
-                                        )}
-                                        <MobileDatePicker
-                                            label="End Date For the event"
-                                            inputFormat="dd/MM/yyyy"
-                                            value={EndDateForEvent}
-                                            onChange={SetHandleChangeForEndEvent}
-                                            variant="outlined"
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                        {DisplayNotificationDate && EndDateTouch ? (
-                                            <>
-                                                {' '}
-                                                <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
-                                                    <AlertTitle>Error</AlertTitle>
-                                                    End Date is less than Start Date
-                                                </Alert>
-                                                {console.log(DisplayNotificationDate, 'ok', EndDateTouch)}
-                                            </>
-                                        ) : (
-                                            <></>
-                                        )}
-                                        <MobileTimePicker
-                                            label="Start Time for the event"
-                                            value={StartDateForEvent}
-                                            onChange={SetHandleChangeForStartEventForTime}
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                        {DisplayNotificationTime && StartTimeTouch ? (
-                                            <>
-                                                {' '}
-                                                <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
-                                                    <AlertTitle>Error</AlertTitle>
-                                                    Start Time more than End Time
-                                                </Alert>
-                                                {console.log(DisplayNotificationTime, 'ok start Time', EndDateTouch)}
-                                            </>
-                                        ) : (
-                                            <></>
-                                        )}{' '}
-                                        <MobileTimePicker
-                                            label="End Time for the event"
-                                            value={EndDateForEvent}
-                                            onChange={SetHandleChangeForEndEventForTime}
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                        {DisplayNotificationTime && EndTimeTouch ? (
-                                            <>
-                                                {' '}
-                                                <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
-                                                    <AlertTitle>Error</AlertTitle>
-                                                    End Time is less than Start Time
-                                                </Alert>
-                                                {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)}
-                                            </>
-                                        ) : (
-                                            <></>
-                                        )}{' '}
-                                        {console.log('TEXT FOR MOBILE =', ReasonForRegistration)}
+                        <Card>
+                            <CardContent style={{}} xs={12} sm={12}>
+                                <Stack spacing={4}>
+                                    <MobileDatePicker
+                                        label="Start Date For the event"
+                                        inputFormat="dd/MM/yyyy"
+                                        value={StartDateForEvent}
+                                        onChange={SetHandleChangeForStartEvent}
+                                        variant="outlined"
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
+                                    {DisplayNotificationDate && StartDateTouch ? (
+                                        <>
+                                            {' '}
+                                            <Alert sx={{ mt: 0, mx: 'auto', mb: 0, border: 'blue' }} severity="error">
+                                                <AlertTitle>Error</AlertTitle>
+                                                Start Date is more than End Date
+                                            </Alert>
+                                            {console.log(DisplayNotificationDate, StartDateTouch)}{' '}
+                                        </>
+                                    ) : (
+                                        <></>
+                                    )}
+                                    <MobileDatePicker
+                                        label="End Date For the event"
+                                        inputFormat="dd/MM/yyyy"
+                                        value={EndDateForEvent}
+                                        onChange={SetHandleChangeForEndEvent}
+                                        variant="outlined"
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
+                                    {DisplayNotificationDate && EndDateTouch ? (
+                                        <>
+                                            {' '}
+                                            <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                <AlertTitle>Error</AlertTitle>
+                                                End Date is less than Start Date
+                                            </Alert>
+                                            {console.log(DisplayNotificationDate, 'ok', EndDateTouch)}
+                                        </>
+                                    ) : (
+                                        <></>
+                                    )}
+                                    <MobileTimePicker
+                                        label="Start Time for the event"
+                                        value={StartDateForEvent}
+                                        onChange={SetHandleChangeForStartEventForTime}
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
+                                    {DisplayNotificationTime && StartTimeTouch ? (
+                                        <>
+                                            {' '}
+                                            <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                <AlertTitle>Error</AlertTitle>
+                                                Start Time more than End Time
+                                            </Alert>
+                                            {console.log(DisplayNotificationTime, 'ok start Time', EndDateTouch)}
+                                        </>
+                                    ) : (
+                                        <></>
+                                    )}{' '}
+                                    <MobileTimePicker
+                                        label="End Time for the event"
+                                        value={EndDateForEvent}
+                                        onChange={SetHandleChangeForEndEventForTime}
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
+                                    {DisplayNotificationTime && EndTimeTouch ? (
+                                        <>
+                                            {' '}
+                                            <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                <AlertTitle>Error</AlertTitle>
+                                                End Time is less than Start Time
+                                            </Alert>
+                                            {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)}
+                                        </>
+                                    ) : (
+                                        <></>
+                                    )}{' '}
+                                    {console.log('TEXT FOR MOBILE =', ReasonForRegistration)}
+                                    <TextField
+                                        id="outlined-textarea"
+                                        onChange={(e) => handleOnchangeTextBox(e)}
+                                        label="Reason for booking slot"
+                                        variant="outlined"
+                                        multiline
+                                        value={ReasonForRegistration}
+                                    />
+                                    <Divider />
+                                    <ListItem style={{ justifyContent: 'center' }}>
+                                        <Button
+                                            disabled={ButtonValidator || ButtonValidator1}
+                                            variant="contained"
+                                            href="www.iitbbs.ac.in"
+                                            style={{ maxWidth: '500px', minWidth: '300px' }}
+                                        >
+                                            Submit
+                                        </Button>
+                                    </ListItem>
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    </DeviceIdentifier>
+                </Grid>
+                <Grid item xs={3}>
+                    <DeviceIdentifier isDesktop={true}>
+                        <Card style={{ maxWidth: '750px', backgroundColor: '' }}>
+                            <CardContent>
+                                <Stack direction="column" spacing={3} style={{ width: 'auto', backgroundColor: 'white' }}>
+                                    <ListItem>
+                                        <Grid container spacing={7}>
+                                            <Grid item xs={6} md={6}>
+                                                <DatePicker
+                                                    label="Start date for the event"
+                                                    inputFormat="dd/MM/yyyy"
+                                                    value={StartDateForEvent}
+                                                    onChange={SetHandleChangeForStartEvent}
+                                                    variant="outlined"
+                                                    renderInput={(params) => <TextField {...params} />}
+                                                />
+
+                                                {DisplayNotificationDate && StartDateTouch ? (
+                                                    <>
+                                                        {' '}
+                                                        <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                            <AlertTitle>Error</AlertTitle>
+                                                            Start Date is more than End Date
+                                                        </Alert>
+                                                        {console.log(DisplayNotificationDate, StartDateTouch)}{' '}
+                                                    </>
+                                                ) : (
+                                                    <></>
+                                                )}
+
+                                                {console.log(TextField)}
+                                            </Grid>
+                                            <Grid item md={6} xs={6}>
+                                                <DatePicker
+                                                    label="End date for the event"
+                                                    inputFormat="dd/MM/yyyy"
+                                                    value={EndDateForEvent}
+                                                    onChange={SetHandleChangeForEndEvent}
+                                                    variant="outlined"
+                                                    renderInput={(params) => <TextField {...params} />}
+                                                />
+                                                {DisplayNotificationDate && EndDateTouch ? (
+                                                    <>
+                                                        {' '}
+                                                        <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                            <AlertTitle>Error</AlertTitle>
+                                                            End Date is less than Start Date
+                                                        </Alert>
+                                                        {console.log(DisplayNotificationDate, 'ok', EndDateTouch)}
+                                                    </>
+                                                ) : (
+                                                    <></>
+                                                )}
+                                            </Grid>
+                                            <Grid item xs={6} md={6}>
+                                                <TimePicker
+                                                    label="Start Time for the Event"
+                                                    value={StartDateForEvent}
+                                                    onChange={SetHandleChangeForStartEventForTime}
+                                                    renderInput={(params) => <TextField {...params} />}
+                                                />
+                                                {DisplayNotificationTime && StartTimeTouch ? (
+                                                    <>
+                                                        {' '}
+                                                        <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                            <AlertTitle>Error</AlertTitle>
+                                                            Start Time more than End time
+                                                        </Alert>
+                                                        {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)}
+                                                    </>
+                                                ) : (
+                                                    <></>
+                                                )}{' '}
+                                            </Grid>
+                                            <Grid item xs={6} md={6}>
+                                                <TimePicker
+                                                    label="End Time for the Event"
+                                                    value={EndDateForEvent}
+                                                    onChange={SetHandleChangeForEndEventForTime}
+                                                    renderInput={(params) => <TextField {...params} />}
+                                                />
+                                                {DisplayNotificationTime && EndTimeTouch ? (
+                                                    <>
+                                                        {' '}
+                                                        <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                            <AlertTitle>Error</AlertTitle>
+                                                            End Time is less than Start Time
+                                                        </Alert>
+                                                        {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)}
+                                                    </>
+                                                ) : (
+                                                    <></>
+                                                )}{' '}
+                                            </Grid>
+                                        </Grid>
+                                    </ListItem>
+                                    <ListItem>
+                                        {console.log('TEXT FOR DESKTOP =', ReasonForRegistration)}
+
                                         <TextField
                                             id="outlined-textarea"
                                             onChange={(e) => handleOnchangeTextBox(e)}
+                                            value={ReasonForRegistration}
                                             label="Reason for booking slot"
                                             variant="outlined"
                                             multiline
-                                            value={ReasonForRegistration}
+                                            style={{ width: '97%' }}
                                         />
-                                        <Divider />
-                                        <ListItem style={{ justifyContent: 'center' }}>
-                                            <Button
-                                                disabled={ButtonValidator || ButtonValidator1}
-                                                variant="contained"
-                                                href="www.iitbbs.ac.in"
-                                                style={{ maxWidth: '500px', minWidth: '300px' }}
-                                            >
-                                                Submit
-                                            </Button>
-                                        </ListItem>
-                                    </Stack>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    </DeviceIdentifier>
-                    <DeviceIdentifier isDesktop={true}>
-                        <Grid container justify="center">
-                            <Card style={{ width: 'auto', maxWidth: '750px' }}>
-                                <CardContent>
-                                    <Stack direction="column" spacing={3} style={{ width: 'auto', backgroundColor: 'white' }}>
-                                        <ListItem>
-                                            <Grid container spacing={7}>
-                                                <Grid item xs={6} md={6}>
-                                                    <DatePicker
-                                                        label="Start date for the event"
-                                                        inputFormat="dd/MM/yyyy"
-                                                        value={StartDateForEvent}
-                                                        onChange={SetHandleChangeForStartEvent}
-                                                        variant="outlined"
-                                                        renderInput={(params) => <TextField {...params} />}
-                                                    />
-
-                                                    {DisplayNotificationDate && StartDateTouch ? (
-                                                        <>
-                                                            {' '}
-                                                            <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
-                                                                <AlertTitle>Error</AlertTitle>
-                                                                Start Date is more than End Date
-                                                            </Alert>
-                                                            {console.log(DisplayNotificationDate, StartDateTouch)}{' '}
-                                                        </>
-                                                    ) : (
-                                                        <></>
-                                                    )}
-
-                                                    {console.log(TextField)}
-                                                </Grid>
-                                                <Grid item md={6} xs={6}>
-                                                    <DatePicker
-                                                        label="End date for the event"
-                                                        inputFormat="dd/MM/yyyy"
-                                                        value={EndDateForEvent}
-                                                        onChange={SetHandleChangeForEndEvent}
-                                                        variant="outlined"
-                                                        renderInput={(params) => <TextField {...params} />}
-                                                    />
-                                                    {DisplayNotificationDate && EndDateTouch ? (
-                                                        <>
-                                                            {' '}
-                                                            <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
-                                                                <AlertTitle>Error</AlertTitle>
-                                                                End Date is less than Start Date
-                                                            </Alert>
-                                                            {console.log(DisplayNotificationDate, 'ok', EndDateTouch)}
-                                                        </>
-                                                    ) : (
-                                                        <></>
-                                                    )}
-                                                </Grid>
-                                                <Grid item xs={6} md={6}>
-                                                    <TimePicker
-                                                        label="Start Time for the Event"
-                                                        value={StartDateForEvent}
-                                                        onChange={SetHandleChangeForStartEventForTime}
-                                                        renderInput={(params) => <TextField {...params} />}
-                                                    />
-                                                    {DisplayNotificationTime && StartTimeTouch ? (
-                                                        <>
-                                                            {' '}
-                                                            <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
-                                                                <AlertTitle>Error</AlertTitle>
-                                                                Start Time more than End time
-                                                            </Alert>
-                                                            {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)}
-                                                        </>
-                                                    ) : (
-                                                        <></>
-                                                    )}{' '}
-                                                </Grid>
-                                                <Grid item xs={6} md={6}>
-                                                    <TimePicker
-                                                        label="End Time for the Event"
-                                                        value={EndDateForEvent}
-                                                        onChange={SetHandleChangeForEndEventForTime}
-                                                        renderInput={(params) => <TextField {...params} />}
-                                                    />
-                                                    {DisplayNotificationTime && EndTimeTouch ? (
-                                                        <>
-                                                            {' '}
-                                                            <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
-                                                                <AlertTitle>Error</AlertTitle>
-                                                                End Time is less than Start Time
-                                                            </Alert>
-                                                            {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)}
-                                                        </>
-                                                    ) : (
-                                                        <></>
-                                                    )}{' '}
-                                                </Grid>
-                                            </Grid>
-                                        </ListItem>
-                                        <ListItem>
-                                            {console.log('TEXT FOR DESKTOP =', ReasonForRegistration)}
-
-                                            <TextField
-                                                id="outlined-textarea"
-                                                onChange={(e) => handleOnchangeTextBox(e)}
-                                                value={ReasonForRegistration}
-                                                label="Reason for booking slot"
-                                                variant="outlined"
-                                                multiline
-                                                style={{ width: '97%' }}
-                                            />
-                                        </ListItem>
-                                        <Divider dark />
-                                        <ListItem style={{ justifyContent: 'center' }}>
-                                            <Button
-                                                variant="contained"
-                                                href="www.iitbbs.ac.in"
-                                                style={{ maxWidth: '500px', minWidth: '300px' }}
-                                                disabled={ButtonValidator || ButtonValidator1}
-                                            >
-                                                Submit
-                                            </Button>
-                                        </ListItem>
-                                    </Stack>
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                                    </ListItem>
+                                    <Divider dark />
+                                    <ListItem style={{ justifyContent: 'center' }}>
+                                        <Button
+                                            variant="contained"
+                                            href="www.iitbbs.ac.in"
+                                            style={{ maxWidth: '500px', minWidth: '300px' }}
+                                            disabled={ButtonValidator || ButtonValidator1}
+                                        >
+                                            Submit
+                                        </Button>
+                                    </ListItem>
+                                </Stack>
+                            </CardContent>
+                        </Card>
                     </DeviceIdentifier>
                 </Grid>
             </Grid>
