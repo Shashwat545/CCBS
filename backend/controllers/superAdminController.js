@@ -53,7 +53,7 @@ exports.getApprovalStatus = async (req, res) => {
               }
             });
             conflictbookings.map((booking) => {
-              await bookingModel.findByIdAndRemove(booking._id);
+             bookingModel.findByIdAndRemove(booking._id);
             });
           } else userBooking.approvedBy[superAdmin] = "accepted";
           break;
