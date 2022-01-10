@@ -52,7 +52,7 @@ class MaintenanceForm extends Component {
                     <label className="col-sm-2 col-form-label">Name:</label>
                     <div className="col-sm-10">
                         <label type="text" name="name" className="name_field">
-                            {this?.props?.fields?.name}
+                            {this?.props?.fields?.userName}
                         </label>
                     </div>
                 </div>
@@ -61,7 +61,7 @@ class MaintenanceForm extends Component {
                     <label className="col-sm-2 col-form-label">Email:</label>
                     <div className="col-sm-10">
                         <label type="text" name="brand_name" className="email_field">
-                            {this?.props?.fields?.email}
+                            {this?.props?.fields?.emailId}
                         </label>
                     </div>
                 </div>
@@ -70,7 +70,7 @@ class MaintenanceForm extends Component {
                     <label className="col-sm-2 col-form-label">Mobile Number:</label>
                     <div className="col-sm-10">
                         <label type="text" name="device_type" className="mobileNumber_field">
-                            {this?.props?.fields?.mobile_no}
+                            {this?.props?.fields?.phoneNo}
                         </label>
                     </div>
                 </div>
@@ -121,9 +121,9 @@ const FormikForm = withFormik({
     },
     mapPropsToValues: (props) => {
         return {
-            name: props.fields.name,
-            email: props.fields.email,
-            mobile_no: props.fields.mobile_no
+            name: props.fields.userName,
+            email: props.fields.emailId,
+            mobile_no: props.fields.phoneNo
         };
     },
     enableReinitialize: true,
