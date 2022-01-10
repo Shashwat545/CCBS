@@ -15,6 +15,7 @@ import { gridSpacing } from 'store/constant';
 import User_DP from 'assets/images/User_Profile.png';
 import App from './App';
 import FormikForm from './FormikForm';
+import axios from 'axios';
 
 // =========================z=====|| PROFILE PAGE ||============================== //
 
@@ -22,6 +23,13 @@ const ProfilePage = () => {
     const [isLoading, setLoading] = useState(true);
     useEffect(() => {
         setLoading(false);
+        const loadBookingHandler = async () => {
+            //Fetching the data of user and it's booking
+           const userId='61b9d1dd4ce21a9d62a0f2a2';
+           const response=await axios.get(`http://localhost:8000/api/v1/user/getUser/${userId}`);
+            console.log(response.data);
+        };
+        loadBookingHandler();
     }, []);
 
     return (

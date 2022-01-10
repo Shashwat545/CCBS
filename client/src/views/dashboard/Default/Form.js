@@ -167,18 +167,19 @@ export default function MaterialUIPickers() {
             EndTimeTouch
         );
 
-        setFormValidate(isFormValidated);
-
         if(!isFormValidated)
-         return;
-
+        return;
+        
         try {
             const data = await axios.post('http://localhost:8000/api/v1/bookings/createBooking', body);
             navigate('/free/pages/profile-page',{replace:true});
+            
+            //Add in the userBooking also
         } catch (err) {
             //Navigate on error page
             console.log(err);
         }
+        setFormValidate(isFormValidated);
     };
 
     return (

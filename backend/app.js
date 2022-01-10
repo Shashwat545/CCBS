@@ -55,8 +55,8 @@ app.use(
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/bookings", bookingRouter);
 
+app.use("/api/v1/user", userRouter);
 app.use("/api/v1/approval", approvalRouter);
 
-app.use("/api/v1/user", userRouter);
 
 module.exports = app;
