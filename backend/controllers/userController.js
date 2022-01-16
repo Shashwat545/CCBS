@@ -99,7 +99,6 @@ exports.patchUserInfo = async (req, res, next) => {
     await req.user.save();
     const { emailId, userName, phoneNo, role, rollNo } = req.user;
     const userDetails = {
-      registered: true,
       emailId,
       userName,
       phoneNo,
