@@ -54,24 +54,64 @@ exports.getAllUser = async (req, res) => {
   }
 };
 
-exports.updateUserInfo = async (req, res) => {
+exports.putUserInfo = async (req, res, next) => {
   try {
-    const updatedEmailId = req.body.emailId;
-    const updatedName = req.body.name;
-    const updatedPhoneNo = req.body.phoneNo;
-    const updatedRollNo = req.body.rollNo;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-    const updatedUser = await userModel.findById(req.params.userId);
+    req.user.phoneNo = req.body.phoneNo;
+    req.user.rollNo = req.body.rollNo || null;
 
-    updatedUser.emailId = updatedEmailId;
-    updatedUser.userName = updatedName;
-    updatedUser.phoneNo = updatedPhoneNo;
-    updatedUser.rollNo = updatedRollNo;
-
-    await updatedUser.save();
-    res.status(200).json(updatedUser);
+    await req.user.save();
+    const { emailId, userName, phoneNo, role, rollNo } = req.user;
+    const userDetails = {
+      emailId,
+      userName,
+      phoneNo,
+      role,
+      picture: req.session.user.picture,
+    };
+    if (rollNo) {
+      userDetails.rollNo = rollNo;
+    }
+    res.status(200).json(userDetails);
   } catch (err) {
-    res.status(500).send(err);
+    next(err);
+  }
+};
+
+exports.patchUserInfo = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    if (req.body.phoneNo) {
+      req.user.phoneNo = req.body.phoneNo;
+    }
+    if (req.body.rollNo) {
+      req.user.rollNo = req.body.rollNo;
+    }
+
+    await req.user.save();
+    const { emailId, userName, phoneNo, role, rollNo } = req.user;
+    const userDetails = {
+      registered: true,
+      emailId,
+      userName,
+      phoneNo,
+      role,
+      picture: req.session.user.picture,
+    };
+    if (rollNo) {
+      userDetails.rollNo = rollNo;
+    }
+    res.status(200).json(userDetails);
+  } catch (err) {
+    next(err);
   }
 };
 

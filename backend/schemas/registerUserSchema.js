@@ -16,7 +16,7 @@ const registerUserSchema = checkSchema({
   },
   rollNo: {
     in: "body",
-    optional: "true",
+    optional: true,
     isString: {
       errorMessage: "Expected roll number to be a string",
     },
@@ -36,4 +36,37 @@ const registerUserSchema = checkSchema({
   },
 });
 
-module.exports = registerUserSchema;
+const patchUserSchema = checkSchema({
+  phoneNo: {
+    in: "body",
+    optional: true,
+    isMobilePhone: {
+      errorMessage: '"phoneNo" field should be a valid phone number',
+    },
+  },
+  rollNo: {
+    in: "body",
+    optional: true,
+    isString: {
+      errorMessage: "Expected roll number to be a string",
+    },
+    custom: {
+      options: (value) => {
+        if (!rollNoRegExp.test(value)) {
+          throw new Error(`Roll number should match ${rollNoRegExp}`);
+        }
+        return value;
+      },
+    },
+    customSanitizer: {
+      options: (value) => {
+        return value.toUpperCase();
+      },
+    },
+  },
+});
+
+module.exports = {
+  registerUserSchema,
+  patchUserSchema,
+};
