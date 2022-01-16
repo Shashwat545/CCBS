@@ -36,6 +36,7 @@ import Transitions from 'ui-component/extended/Transitions';
 import UpgradePlanCard from './UpgradePlanCard';
 import User1 from 'assets/images/users/user-round.svg';
 import IITBBS from 'assets/images/IITBBS.png';
+import logoutUser from 'services/logoutUser';
 // assets
 import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
 import LogOut from './LogOut';
@@ -72,7 +73,12 @@ const ProfileSection = () => {
      * */
     const anchorRef = useRef(null);
     const handleLogout = async () => {
-        console.log('Logout');
+        try {
+            await logoutUser();
+            navigate('/free/pages/login/login3');
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const handleClose = (event) => {
@@ -104,7 +110,6 @@ const ProfileSection = () => {
     }, [open]);
     function handleOnclick(e) {
         console.log(e);
-        navigate('../../../../views/pages/authentication/authentication3/Login3');
     }
     return (
         <>
@@ -147,7 +152,7 @@ const ProfileSection = () => {
                 ref={anchorRef}
                 aria-controls={open ? 'menu-list-grow' : undefined}
                 aria-haspopup="true"
-                onClick={handleOnclick}
+                onClick={handleLogout}
                 color="primary"
             />
             {console.log('okie', theme.palette.error.main)}

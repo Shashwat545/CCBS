@@ -8,18 +8,25 @@ const OAuthRedirect = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const code = searchParams.get('code');
+    const hd = searchParams.get('hd');
 
     useEffect(() => {
-        loginGoogleUser(code)
-            .then(() => {
-                navigate('/free');
-            })
-            .catch((err) => {
-                console.error('Error found while trying to send code');
-                console.error(err);
-                navigate('/free/pages/login/login3');
-            });
-    }, [code, navigate]);
+        // Check for the 'hd' value
+        if (hd !== 'iitbbs.ac.in') {
+            console.error("Incorrect value for 'hd'");
+            navigate('/free/pages/login/login3');
+        } else {
+            loginGoogleUser(code)
+                .then(() => {
+                    navigate('/free');
+                })
+                .catch((err) => {
+                    console.error('Error found while trying to send code');
+                    console.error(err);
+                    navigate('/free/pages/login/login3');
+                });
+        }
+    }, [code, hd, navigate]);
 
     return <Loader />;
 };
