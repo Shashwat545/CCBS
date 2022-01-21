@@ -20,7 +20,8 @@ exports.postCreateUser = async (req, res) => {
 exports.getOneUser = async (req, res) => {
   try {
     const user = await userModel.findById(req.params.userId);
-    res.status(200).json(user);
+    const userData=await user.populate("bookings");
+    res.status(200).json(userData);
   } catch (err) {
     res.status(500).send("Error in getting user" + err);
   }

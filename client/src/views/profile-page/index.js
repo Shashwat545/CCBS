@@ -15,14 +15,61 @@ import { gridSpacing } from 'store/constant';
 import User_DP from 'assets/images/User_Profile.png';
 import App from './App';
 import FormikForm from './FormikForm';
+import axios from 'axios';
 
 // =========================z=====|| PROFILE PAGE ||============================== //
 
 const ProfilePage = () => {
     const [isLoading, setLoading] = useState(true);
+    const [fields, updateFields] = useState({});
+
     useEffect(() => {
         setLoading(false);
-    }, []);
+        const loadBookingHandler = async () => {
+            //Fetching the data of user and it's booking
+            const userId = '61b9d1dd4ce21a9d62a0f2a2';
+            const response = await axios.get(`http://localhost:8000/api/v1/user/getUser/${userId}`);
+            updateFields(response.data);
+        };
+        loadBookingHandler();
+    }, [updateFields]);
+
+    function isEmpty(obj) {
+        return Object.keys(obj).length === 0;
+    }
+
+    let bookingContent = <p>Nothing to Show</p>;
+    if (!isEmpty(fields))
+        bookingContent = fields.bookings.map((booking) => {
+            let status =" Accepted";
+            for (const superAdmin in booking.approvedBy) {
+                if (booking.approvedBy[superAdmin] === 'pending') {
+                    status = 'Pending';
+                    break;
+                }
+            }
+            return (
+                <Grid item xs={12} sm={8}>
+                    <Grid container direction="column" spacing={1} key={booking._id}>
+                        <Grid item>
+                            <MuiTypography variant="subtitle1" gutterBottom>
+                                {booking.startTime} {booking.endTime}
+                            </MuiTypography>
+                        </Grid>
+                        <Grid item>
+                            <MuiTypography variant="subtitle2" gutterBottom>
+                                {booking.reason}
+                            </MuiTypography>
+                        </Grid>
+                        <Grid item>
+                            <MuiTypography variant="subtitle2" gutterBottom>
+                                {status}
+                            </MuiTypography>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            );
+        });
 
     return (
         <MainCard>
@@ -35,7 +82,9 @@ const ProfilePage = () => {
                                 <MuiTypography variant="h1" gutterBottom></MuiTypography>
                             </Grid>
                             <Grid item>
-                                <App />
+                                <div className="container">
+                                    <FormikForm fields={fields} updateFields={updateFields} />
+                                </div>
                                 <MuiTypography variant="h1" gutterBottom></MuiTypography>
                             </Grid>
                             <Grid item>
@@ -53,22 +102,7 @@ const ProfilePage = () => {
                         </Grid>
                     </SubCard>
                 </Grid>
-                <Grid item xs={12} sm={8}>
-                    <SubCard title="Booking History">
-                        <Grid container direction="column" spacing={1}>
-                            <Grid item>
-                                <MuiTypography variant="subtitle1" gutterBottom>
-                                    subtitle1. Lorem ipsum dolor sit connecter adieu siccing eliot. Quos blanditiis tenetur
-                                </MuiTypography>
-                            </Grid>
-                            <Grid item>
-                                <MuiTypography variant="subtitle2" gutterBottom>
-                                    subtitle2. Lorem ipsum dolor sit connecter adieu siccing eliot. Quos blanditiis tenetur
-                                </MuiTypography>
-                            </Grid>
-                        </Grid>
-                    </SubCard>
-                </Grid>
+                <SubCard title="Booking History">{bookingContent}</SubCard>
             </Grid>
         </MainCard>
     );
