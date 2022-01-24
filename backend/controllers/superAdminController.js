@@ -52,9 +52,11 @@ exports.getApprovalStatus = async (req, res) => {
                 return booking;
               }
             });
-            conflictbookings.map(async (booking) => {
-              await bookingModel.findByIdAndRemove(booking._id);
-            });
+            await Promise.all(
+              conflictbookings.map((booking) =>
+                bookingModel.findByIdAndRemove(booking._id)
+              )
+            );
           } else userBooking.approvedBy[superAdmin] = "accepted";
           break;
         }
