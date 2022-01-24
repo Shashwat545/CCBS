@@ -54,7 +54,7 @@ exports.getApprovalStatus = async (req, res) => {
             });
             await Promise.all(
               conflictbookings.map((booking) =>
-                bookingModel.findByIdAndRemove(booking._id)
+                bookingModel.findByIdAndRemove(booking._id).exec()
               )
             );
           } else userBooking.approvedBy[superAdmin] = "accepted";
