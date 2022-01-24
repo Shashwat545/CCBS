@@ -14,7 +14,7 @@ router.get(
 
 router.get('/:bookingId', bookingController.getOneBooking)
 
-router.post('/', bookingController.createBooking)
+router.post('/createBooking', bookingController.createBooking)
 
 router.delete('/:bookingId', bookingController.deleteBooking)
 
