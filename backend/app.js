@@ -17,6 +17,7 @@ const MONGO_URL = process.env.mongo_url;
 app.use(
   cors({
     origin: "http://localhost:3000",
+    optionsSuccessStatus: 200,
     credentials: true,
   })
 );

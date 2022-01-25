@@ -19,7 +19,6 @@ exports.getApprovalStatus = async (req, res) => {
   const bookingId = req.params.bookingId;
   //Tell user that your booking{bookingId} is cancelled via mail and delete the booking also from database
   if (status === "reject") {
-    userBooking.approvedBy[pendingIndex] = "rejected";
     try {
       await bookingModel.findByIdAndRemove(req.params.bookingId);
       res.status(200).send("Booking deleted successfully");
@@ -55,7 +54,14 @@ exports.getApprovalStatus = async (req, res) => {
             conflictbookings.map(async (booking) => {
               await bookingModel.findByIdAndRemove(booking._id);
             });
-          } else userBooking.approvedBy[superAdmin] = "accepted";
+
+            res.status.send(`${bookingId} confirmed`);
+          } else {
+            userBooking.approvedBy[superAdmin] = "accepted";
+            res.status.send(
+              `${bookingId} confirmed by SuperAdmin${pendingIndex}`
+            );
+          }
           break;
         }
       }

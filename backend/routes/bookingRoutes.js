@@ -7,8 +7,8 @@ const getBookingSchema = require("../schemas/getBookingSchema");
 console.log("auth=", isAuthenticated);
 router.get(
   "/",
-  isAuthenticated,
-  getBookingSchema,
+  // isAuthenticated,
+  // getBookingSchema,
   bookingController.getAllBookings
 );
 

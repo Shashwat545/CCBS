@@ -95,7 +95,7 @@ const createBooking = async (req, res) => {
     .catch((err) => {
       console.log(err);
     });*/
-  // req.user = await userModel.findById("61b9d1dd4ce21a9d62a0f2a2");
+  req.user = await userModel.findById("61b9d1dd4ce21a9d62a0f2a2");
 
   
   //Creating a newBooking object

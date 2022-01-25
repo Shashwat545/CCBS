@@ -169,19 +169,7 @@ export default function MaterialUIPickers() {
             !DisplayNotificationTime &&
             !EndTimeTouch &&
             DisplayNotificationReason;
-        console.log(
-            DisplayNotificationDate,
-            StartDateTouch,
-            DisplayNotificationDate,
-            EndTimeTouch,
-            DisplayNotificationTime,
-            StartTimeTouch,
-            DisplayNotificationTime,
-            EndTimeTouch,
-            DisplayNotificationReason,
-            isFormValidated,
-            'Form Checker'
-        );
+
         if (!ReasonForRegistration) return;
 
         try {
@@ -231,7 +219,6 @@ export default function MaterialUIPickers() {
                                                 <AlertTitle>Error</AlertTitle>
                                                 Start Date is more than End Date
                                             </Alert>
-                                            {/* {console.log(DisplayNotificationDate, StartDateTouch)}{' '} */}
                                         </>
                                     ) : (
                                         <></>

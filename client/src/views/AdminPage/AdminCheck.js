@@ -41,8 +41,14 @@ export default function MaterialUIPickers() {
         getData();
     }, []);
 
-    const handleRemoveItem = (item) => {
-        setrequestFromAdmins((prev) => [...prev.filter((i) => i !== item)]);
+    const handleRemoveItem = async(event) => {
+        const value=event.nativeEvent.target.value;
+        const status=value.split(' ')[0];
+        const bookingId=value.split(' ')[1];
+        console.log('From Button', value,bookingId,status);
+        const data=await axios.get(`http://localhost:8000/api/v1/approval/${status}/${bookingId}`);
+        console.log(data);
+        // setrequestFromAdmins((prev) => [...prev.filter((i) => i !== item)]);
     };
     let dk = 0;
     function renderItem({ item, handleRemoveItem }) {
@@ -53,13 +59,7 @@ export default function MaterialUIPickers() {
                     el={
                         <>
                             {' '}
-                            <Button
-                                variant="outlined"
-                                onClick={() => {
-                                    console.log('item=', item);
-                                    handleRemoveItem(item);
-                                }}
-                            >
+                            <Button variant="outlined" value={`reject ${item._id}`} onClick={handleRemoveItem}>
                                 {' Reject Request     '} &nbsp;
                                 <DeleteIcon />
                             </Button>
@@ -68,7 +68,7 @@ export default function MaterialUIPickers() {
                     el2={
                         <>
                             {' '}
-                            <Button variant="outlined" onClick={() => handleRemoveItem(item)}>
+                            <Button variant="outlined" value={`accept ${item._id}`} onClick={handleRemoveItem}>
                                 {'Accept Request'} &nbsp; <CheckIcon />{' '}
                             </Button>
                         </>
