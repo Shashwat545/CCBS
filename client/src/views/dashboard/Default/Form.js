@@ -186,7 +186,7 @@ export default function MaterialUIPickers() {
 
         try {
             const data = await axios.post('http://localhost:8000/api/v1/bookings/createBooking', body);
-            console.log(data);
+            navigate('/free/pages/profile-page', { replace: true });
 
             //Add in the userBooking also
         } catch (err) {

@@ -32,7 +32,6 @@ export default function RecipeReviewCard(props) {
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
-    console.log(props);
     const [obj, setObj] = React.useState(props.data);
     return (
         <>

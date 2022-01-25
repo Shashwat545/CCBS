@@ -1,6 +1,5 @@
 const { validationResult } = require("express-validator");
 
-const { ObjectId } = require("mongodb");
 const bookingModel = require("../models/bookingModel");
 const userModel = require("../models/userModel");
 
@@ -46,7 +45,6 @@ const sendBookingRequest = async (
   conflictbookingId = null,
   user = null
 ) => {
-  console.log("HELLO FROM SEND BOOKING");
   try {
     if (!isBooking) {
       res
@@ -58,23 +56,12 @@ const sendBookingRequest = async (
       if (conflictbookingId != null)
         await bookingModel.findByIdAndRemove(conflictbookingId);
       const bookRequest = await bookingModel.create(booking);
-      console.log("Booking Request=", bookRequest);
-      const bookingUser = await userModel.findById(bookRequest.bookedBy._id);
-      console.log("Bookings by given user=", bookingUser);
-      if (bookingUser != null) {
-        bookingUser.bookings.unshift(bookRequest);
-        bookingUser.save();
-      }
-      bookRequest.save(function (err, bookRequest) {
-        if (err) console.log("oh no ", err);
-        else console.log(bookRequest);
-      });
-      const dk = await bookingModel.find();
-      // console.log(dk);
+      const bookingUser = await userModel.findById(user._id);
+      bookingUser.bookings.unshift(bookRequest);
+      bookingUser.save();
       res.status(200).json(bookRequest);
     }
   } catch (err) {
-    console.log(err, "ERR");
     res.status(500).send(err);
   }
 };
@@ -94,11 +81,11 @@ const createBooking = async (req, res) => {
      -> allow booking and send for approval*/
 
   //To create Dummy user for checking purpose
-  const user = new userModel({
+  /* const user = new userModel({
     emailId: "abc@iitbb.ac.in",
-    userName: "Prateek",
+    userName: "Ritik",
     phoneNo: "8909876578",
-    role: "student",
+    role: "superAdmin",
   });
   user
     .save()
@@ -107,28 +94,21 @@ const createBooking = async (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-    });
+    });*/
   // req.user = await userModel.findById("61b9d1dd4ce21a9d62a0f2a2");
-  req.user = user;
 
+  
   //Creating a newBooking object
-  // console.log("Request Body", req.body);
   const newBooking = {
     startTime: new Date(req.body.startTime),
     endTime: new Date(req.body.endTime),
     reason: req.body.reason,
-    bookedBy: req.user,
-    // _id: new ObjectId(),
-    // bookedBy: new ObjectId("61b9d1dd4ce21a9d62a0f2a2"),
-    // __v: 0,
-    //it will req.user that is created at the start of the session and for checking it will be replaced by user
+    bookedBy: req.user, //it will req.user that is created at the start of the session and for checking it will be replaced by user
   };
   //This will find all the existing booking
-  // console.log(newBooking);
   const allbookings = await bookingModel.find();
+
   //This will fliter out the conflict containing booking
-  // console.log(allbookings);
-  // console.log(allbookings);
   const conflictbookings = allbookings.filter((booking) => {
     if (
       !(booking.startTime >= newBooking.endTime) &&
@@ -142,7 +122,6 @@ const createBooking = async (req, res) => {
     "There are already slots booked on those days so book other slots";
   //This will check for conflict booking and if it exist then it will populate the details of the booking and proceed according to main idea
   if (conflictbookings.length > 0) {
-    console.log(message);
     conflictbookings.map((user) =>
       user.populate("bookedBy").then((conflictbooking) => {
         let isConflictBookingApproved = false,
@@ -169,7 +148,7 @@ const createBooking = async (req, res) => {
           //If conflict booking is not approved till now then we have to create this booking
           if (!isConflictBookingApproved)
             sendBookingRequest(true, newBooking, res, null, req.user);
-          else if (conflictbooking.bookedByrole === "student") {
+          else if (conflictbooking.bookedBy.role === "student") {
             //Create the booking and send for approval and also tell the conflict user(student) that your booking is cancelled
             sendBookingRequest(
               true,
@@ -193,8 +172,6 @@ const createBooking = async (req, res) => {
     );
   } else {
     //Create the booking as there are no conflict and send for approval
-    console.log("OK NEW BOOKING APPROVED");
-    // console.log(newBooking, "");
     sendBookingRequest(true, newBooking, res, null, req.user);
   }
 };
