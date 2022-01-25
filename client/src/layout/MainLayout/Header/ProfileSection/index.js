@@ -104,7 +104,7 @@ const ProfileSection = () => {
     }, [open]);
     function handleOnclick(e) {
         console.log(e);
-        navigate('../../../../views/pages/authentication/authentication3/Login3');
+        navigate('../../../../free/pages/login/login3');
     }
     return (
         <>

@@ -10,11 +10,10 @@ const authRouter = require("./routes/authRoutes");
 const bookingRouter = require("./routes/bookingRoutes");
 const approvalRouter = require("./routes/approvalRoutes");
 
-const userRouter=require('./routes/userRoutes');
+const userRouter = require("./routes/userRoutes");
 
 const SECRET_KEY = process.env.CCBS_SECRET_KEY;
 const MONGO_URL = process.env.mongo_url;
-
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -57,6 +56,5 @@ app.use("/api/v1/bookings", bookingRouter);
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/approval", approvalRouter);
-
 
 module.exports = app;

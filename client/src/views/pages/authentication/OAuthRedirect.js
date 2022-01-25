@@ -12,7 +12,7 @@ const OAuthRedirect = () => {
     useEffect(() => {
         loginGoogleUser(code)
             .then(() => {
-                navigate('/free');
+                navigate('/free/pages/login/login3');
             })
             .catch((err) => {
                 console.error('Error found while trying to send code');

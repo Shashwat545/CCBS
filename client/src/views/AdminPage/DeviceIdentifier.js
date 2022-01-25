@@ -18,7 +18,7 @@ export default class DeviceIdentifier extends React.PureComponent {
 
     handleWindowResize() {
         const resolution = window.innerWidth;
-        console.log('resolution= ', resolution);
+        // console.log('resolution= ', resolution);
         const isMobile = resolution >= 120 && resolution <= 485;
 
         const isTablet = resolution >= 485 && resolution <= 669;
@@ -49,7 +49,6 @@ export default class DeviceIdentifier extends React.PureComponent {
 
             isTablet: propsIsTablet = false
         } = this.props;
-        console.log('Desktop= ', isDesktop, propsIsDesktop, 'Mobile= ', isMobile, propsIsMobile, 'Tablet= ', isTablet, propsIsTablet);
         if ((isDesktop && propsIsDesktop) || (isMobile && propsIsMobile) || (isTablet && propsIsTablet)) {
             return <React.Fragment>{this.props.children}</React.Fragment>;
         }

@@ -90,7 +90,7 @@ const FirebaseLogin = ({ ...others }) => {
                             })
                         );
                     })
-                    .catch((err) => console.error(err));
+                    .catch((err) => console.error('ERRORE:', err));
             });
     }, []);
 

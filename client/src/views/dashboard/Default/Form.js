@@ -19,18 +19,21 @@ import { Typography } from '@mui/material';
 import axios from 'axios';
 export default function MaterialUIPickers() {
     var localDate = new Date();
-    const navigate=useNavigate();
+    const navigate = useNavigate();
 
     const [ReasonForRegistration, setReasonForRegistration] = React.useState('');
     const [DisplayNotificationDate, setDisplayNotificationDate] = React.useState(false);
+
+    const [DisplayNotificationReason, setDisplayNotificationReason] = React.useState(false);
     const [DisplayNotificationTime, setDisplayNotificationTime] = React.useState(false);
     const [StartTimeTouch, setStartTimeTouch] = React.useState(false);
+    const [ReasonTouch, setReasonTouch] = React.useState(true);
     const [ButtonValidator, setButtonValidator] = React.useState(false);
     const [ButtonValidator1, setButtonValidator1] = React.useState(false);
     const [EndTimeTouch, setEndTimeTouch] = React.useState(false);
     const [StartDateTouch, setStartDateTouch] = React.useState(false);
     const [EndDateTouch, setEndDateTouch] = React.useState(false);
-    const [isFormValidate,setFormValidate]=React.useState(false);
+    const [isFormValidate, setFormValidate] = React.useState(false);
     const [StartDateForEvent, setStartDateForEvent] = React.useState(
         new Date(
             localDate.getFullYear(),
@@ -145,8 +148,8 @@ export default function MaterialUIPickers() {
         if (newValue && StartDateForEvent) ValidatorForDates(StartDateForEvent, newValue);
     };
     const handleOnchangeTextBox = (event) => {
-        // console.log('Pinch of salT', event.target.value);
         setReasonForRegistration(event.target.value);
+        setReasonTouch(true);
     };
 
     const submitFormBtnHandler = async () => {
@@ -156,32 +159,51 @@ export default function MaterialUIPickers() {
             reason: ReasonForRegistration
         };
 
-        const isFormValidated = !(
-            DisplayNotificationDate &&
-            StartDateTouch &&
-            DisplayNotificationDate &&
-            EndDateTouch &&
-            DisplayNotificationTime &&
-            StartTimeTouch &&
-            isplayNotificationTime &&
-            EndTimeTouch
+        const isFormValidated =
+            !DisplayNotificationDate &&
+            !StartDateTouch &&
+            !DisplayNotificationDate &&
+            !EndDateTouch &&
+            !DisplayNotificationTime &&
+            !StartTimeTouch &&
+            !DisplayNotificationTime &&
+            !EndTimeTouch &&
+            DisplayNotificationReason;
+        console.log(
+            DisplayNotificationDate,
+            StartDateTouch,
+            DisplayNotificationDate,
+            EndTimeTouch,
+            DisplayNotificationTime,
+            StartTimeTouch,
+            DisplayNotificationTime,
+            EndTimeTouch,
+            DisplayNotificationReason,
+            isFormValidated,
+            'Form Checker'
         );
+        if (!ReasonForRegistration) return;
 
-        if(!isFormValidated)
-        return;
-        
         try {
             const data = await axios.post('http://localhost:8000/api/v1/bookings/createBooking', body);
-            navigate('/free/pages/profile-page',{replace:true});
-            
+            console.log(data);
+
             //Add in the userBooking also
         } catch (err) {
             //Navigate on error page
-            console.log(err);
+            console.log(err, 'EERRR');
         }
         setFormValidate(isFormValidated);
     };
-
+    function requestSubmitted() {
+        if (!ReasonForRegistration) {
+            setDisplayNotificationReason(true);
+        } else {
+            setDisplayNotificationReason(false);
+        }
+        // console.log(StartDateForEvent, EndDateForEvent, ReasonForRegistration);
+        submitFormBtnHandler();
+    }
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Grid container spacing={0} direction="column" alignItems="center" justifyContent="center">
@@ -279,19 +301,30 @@ export default function MaterialUIPickers() {
                                         multiline
                                         value={ReasonForRegistration}
                                     />
+                                    {DisplayNotificationReason && ReasonTouch ? (
+                                        <>
+                                            {' '}
+                                            <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                <AlertTitle>Error</AlertTitle>
+                                                Reason Can't be empty
+                                            </Alert>
+                                            {/* {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)} */}
+                                        </>
+                                    ) : (
+                                        <></>
+                                    )}{' '}
                                     <Divider />
                                     <ListItem style={{ justifyContent: 'center' }}>
-                                        <div className="submitFormBtn" onClick={submitFormBtnHandler}>
-                                            {' '}
-                                            <Button
-                                                disabled={ButtonValidator || ButtonValidator1}
-                                                variant="contained"
-                                                // href="www.iitbbs.ac.in"
-                                                style={{ maxWidth: '500px', minWidth: '300px' }}
-                                            >
-                                                Submit
-                                            </Button>
-                                        </div>
+                                        {' '}
+                                        <Button
+                                            disabled={ButtonValidator || ButtonValidator1}
+                                            variant="contained"
+                                            // href="www.iitbbs.ac.in"
+                                            onClick={requestSubmitted}
+                                            style={{ maxWidth: '500px', minWidth: '300px' }}
+                                        >
+                                            Submit
+                                        </Button>
                                     </ListItem>
                                 </Stack>
                             </CardContent>
@@ -317,12 +350,17 @@ export default function MaterialUIPickers() {
 
                                                 {DisplayNotificationDate && StartDateTouch ? (
                                                     <>
-                                                        {' '}
-                                                        <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
-                                                            <AlertTitle>Error</AlertTitle>
-                                                            Start Date is more than End Date
-                                                        </Alert>
-                                                        {/* {console.log(DisplayNotificationDate, StartDateTouch)}{' '} */}
+                                                        <div style={{ paddingLeft: '0px', paddingRight: '35px', backgroundColor: '' }}>
+                                                            {' '}
+                                                            <Alert
+                                                                sx={{ mt: 2, mx: 'auto', mb: '0', maxWidth: '270px', paddingLeft: '4px' }}
+                                                                severity="error"
+                                                            >
+                                                                <AlertTitle>Error</AlertTitle>
+                                                                Start Date is more than End Date
+                                                            </Alert>
+                                                            {/* {console.log(DisplayNotificationDate, StartDateTouch)}{' '} */}
+                                                        </div>
                                                     </>
                                                 ) : (
                                                     <></>
@@ -341,12 +379,17 @@ export default function MaterialUIPickers() {
                                                 />
                                                 {DisplayNotificationDate && EndDateTouch ? (
                                                     <>
-                                                        {' '}
-                                                        <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
-                                                            <AlertTitle>Error</AlertTitle>
-                                                            End Date is less than Start Date
-                                                        </Alert>
-                                                        {/* {console.log(DisplayNotificationDate, 'ok', EndDateTouch)} */}
+                                                        <div style={{ paddingLeft: '0px', paddingRight: '35px', backgroundColor: '' }}>
+                                                            {' '}
+                                                            <Alert
+                                                                sx={{ mt: 2, mx: 'auto', mb: '0', maxWidth: '270px', paddingLeft: '4px' }}
+                                                                severity="error"
+                                                            >
+                                                                <AlertTitle>Error</AlertTitle>
+                                                                End Date is less than Start Date
+                                                            </Alert>
+                                                            {/* {console.log(DisplayNotificationDate, 'ok', EndDateTouch)} */}
+                                                        </div>
                                                     </>
                                                 ) : (
                                                     <></>
@@ -361,12 +404,17 @@ export default function MaterialUIPickers() {
                                                 />
                                                 {DisplayNotificationTime && StartTimeTouch ? (
                                                     <>
-                                                        {' '}
-                                                        <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
-                                                            <AlertTitle>Error</AlertTitle>
-                                                            Start Time more than End time
-                                                        </Alert>
-                                                        {/* {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)} */}
+                                                        <div style={{ paddingLeft: '0px', paddingRight: '35px', backgroundColor: '' }}>
+                                                            {' '}
+                                                            <Alert
+                                                                sx={{ mt: 2, mx: 'auto', mb: '0', maxWidth: '270px', paddingLeft: '4px' }}
+                                                                severity="error"
+                                                            >
+                                                                <AlertTitle>Error</AlertTitle>
+                                                                Start Time more than End time
+                                                            </Alert>
+                                                            {/* {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)} */}
+                                                        </div>
                                                     </>
                                                 ) : (
                                                     <></>
@@ -380,23 +428,25 @@ export default function MaterialUIPickers() {
                                                     renderInput={(params) => <TextField {...params} />}
                                                 />
                                                 {DisplayNotificationTime && EndTimeTouch ? (
-                                                    <>
+                                                    <div style={{ paddingLeft: '0px', paddingRight: '35px', backgroundColor: '' }}>
                                                         {' '}
-                                                        <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                        <Alert
+                                                            sx={{ mt: 2, mx: 'auto', mb: '0', maxWidth: '270px', paddingLeft: '4px' }}
+                                                            severity="error"
+                                                        >
                                                             <AlertTitle>Error</AlertTitle>
                                                             End Time is less than Start Time
                                                         </Alert>
                                                         {/* {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)} */}
-                                                    </>
+                                                    </div>
                                                 ) : (
                                                     <></>
                                                 )}{' '}
                                             </Grid>
                                         </Grid>
                                     </ListItem>
-                                    <ListItem>
+                                    <ListItem style={{ backgroundColor: '', maxWidth: '671px' }}>
                                         {/* {console.log('TEXT FOR DESKTOP =', ReasonForRegistration)} */}
-
                                         <TextField
                                             id="outlined-textarea"
                                             onChange={(e) => handleOnchangeTextBox(e)}
@@ -404,22 +454,36 @@ export default function MaterialUIPickers() {
                                             label="Reason for booking slot"
                                             variant="outlined"
                                             multiline
-                                            style={{ width: '97%' }}
+                                            style={{ width: '100%' }}
                                         />
+                                    </ListItem>
+
+                                    <ListItem>
+                                        {DisplayNotificationReason && ReasonTouch ? (
+                                            <>
+                                                {' '}
+                                                <Alert sx={{ mt: 2, mx: 'auto', mb: '0' }} severity="error">
+                                                    <AlertTitle>Error</AlertTitle>
+                                                    Reason Can't be empty
+                                                </Alert>
+                                                {/* {console.log(DisplayNotificationTime, 'ok End Time', EndDateTouch)} */}
+                                            </>
+                                        ) : (
+                                            <></>
+                                        )}{' '}
                                     </ListItem>
                                     <Divider dark />
                                     <ListItem style={{ justifyContent: 'center' }}>
-                                        <div className="submitFormBtn" onClick={submitFormBtnHandler}>
-                                            {' '}
-                                            <Button
-                                                variant="contained"
-                                                // href="www.iitbbs.ac.in"
-                                                style={{ maxWidth: '500px', minWidth: '300px' }}
-                                                disabled={ButtonValidator || ButtonValidator1}
-                                            >
-                                                Submit
-                                            </Button>
-                                        </div>
+                                        {' '}
+                                        <Button
+                                            variant="contained"
+                                            // href="www.iitbbs.ac.in"
+                                            style={{ maxWidth: '500px', minWidth: '300px' }}
+                                            disabled={ButtonValidator || ButtonValidator1}
+                                            onClick={requestSubmitted}
+                                        >
+                                            Submit
+                                        </Button>
                                     </ListItem>
                                 </Stack>
                             </CardContent>
