@@ -13,6 +13,7 @@ exports.getSuperAdmin = (req, res) => {
 exports.getApprovalStatus = async (req, res) => {
   const status = req.params.status;
   const userRole = req.user.role;
+  // const userRole = "superAdmin";
 
   if (userRole !== "superAdmin")
     res.status(401).send("You are not authorized to this");
@@ -21,51 +22,62 @@ exports.getApprovalStatus = async (req, res) => {
   if (status === "reject") {
     try {
       await bookingModel.findByIdAndRemove(req.params.bookingId);
-      res.status(200).send("Booking deleted successfully");
+      res.status(200).json("Booking deleted successfully");
     } catch (err) {
       res.status(500).send(err);
     }
   } else {
     try {
       const userBooking = await bookingModel.findById(bookingId);
-      let pendingIndex = 0;
+      let pendingIndex = 0,
+        flag = 1;
       for (const superAdmin in userBooking.approvedBy) {
         pendingIndex++;
         if (userBooking.approvedBy[superAdmin] === "pending") {
           if (pendingIndex === 3) {
+            flag = 0;
             userBooking.approvedBy[superAdmin] = "accepted";
             console.log("Send Email!!!!");
             //send a mail that you booking is confirmed
 
             //Deleting all other booking which are conflicted
+
             //This will find all the existing booking
             const allbookings = await bookingModel.find();
 
             //This will fliter out the conflict containing booking
             const conflictbookings = allbookings.filter((booking) => {
               if (
-                !(booking.startTime >= newBooking.endTime) &&
-                !(booking.endTime <= newBooking.startTime) &&
-                booking._id !== bookingId
+                !(booking.startTime >= userBooking.endTime) &&
+                !(booking.endTime <= userBooking.startTime) &&
+                booking._id.toString() !== bookingId
               ) {
                 return booking;
               }
             });
-            conflictbookings.map(async (booking) => {
-              await bookingModel.findByIdAndRemove(booking._id);
-            });
+            if (conflictbookings.length > 0)
+              conflictbookings.map(async (booking) => {
+                await bookingModel.findByIdAndRemove(booking._id);
+              });
 
-            res.status.send(`${bookingId} confirmed`);
+            await userBooking.save();
+            res.status(200).json(`${bookingId} confirmed`);
           } else {
             userBooking.approvedBy[superAdmin] = "accepted";
-            res.status.send(
-              `${bookingId} confirmed by SuperAdmin${pendingIndex}`
-            );
+            await userBooking.save();
+            res
+              .status(200)
+              .json(`${bookingId} confirmed by SuperAdmin ${pendingIndex}`);
           }
           break;
         }
       }
-      userBooking.save();
+      if (flag) {
+        console.log("Already Booked");
+        res
+          .status(200)
+          .send(`${bookingId} is already confirmed no futher need`);
+      }
     } catch (err) {
       res.status(500).send(err);
     }

@@ -4,11 +4,11 @@ const router = express.Router();
 const bookingController = require("../controllers/bookingController.js");
 const { isAuthenticated } = require("../controllers/authController");
 const getBookingSchema = require("../schemas/getBookingSchema");
-console.log("auth=", isAuthenticated);
+
 router.get(
   "/",
-  // isAuthenticated,
-  // getBookingSchema,
+  isAuthenticated,
+  getBookingSchema,
   bookingController.getAllBookings
 );
 

@@ -41,14 +41,16 @@ export default function MaterialUIPickers() {
         getData();
     }, []);
 
-    const handleRemoveItem = async(event) => {
-        const value=event.nativeEvent.target.value;
-        const status=value.split(' ')[0];
-        const bookingId=value.split(' ')[1];
-        console.log('From Button', value,bookingId,status);
-        const data=await axios.get(`http://localhost:8000/api/v1/approval/${status}/${bookingId}`);
-        console.log(data);
-        // setrequestFromAdmins((prev) => [...prev.filter((i) => i !== item)]);
+    const handleRemoveItem = async (event) => {
+        const value = event.nativeEvent.target.value;
+        if (value) {
+            const status = value.split(' ')[0];
+            const bookingId = value.split(' ')[1];
+            const data = await axios.get(`http://localhost:8000/api/v1/approval/${status}/${bookingId}`);
+
+            //This is not working in any case delete only last booking 
+            // setrequestFromAdmins((prev) => [...prev.filter((i) => i._id.toString() !== bookingId)]);
+        }
     };
     let dk = 0;
     function renderItem({ item, handleRemoveItem }) {
@@ -67,9 +69,8 @@ export default function MaterialUIPickers() {
                     }
                     el2={
                         <>
-                            {' '}
                             <Button variant="outlined" value={`accept ${item._id}`} onClick={handleRemoveItem}>
-                                {'Accept Request'} &nbsp; <CheckIcon />{' '}
+                                {'Accept Request'} &nbsp; <CheckIcon />
                             </Button>
                         </>
                     }
@@ -158,9 +159,7 @@ export default function MaterialUIPickers() {
                             </div>
                             <Stack spacing={1} style={{ backgroundColor: '' }}>
                                 <TransitionGroup>
-                                    {requestFromAdmins.map((item) =>
-                                        adminDisplay && item ? renderItem({ item, handleRemoveItem }) : <>{console.log(item, 'blank')}</>
-                                    )}
+                                    {requestFromAdmins.map((item) => adminDisplay && item && renderItem({ item, handleRemoveItem }))}
                                 </TransitionGroup>
                             </Stack>
                             <div
