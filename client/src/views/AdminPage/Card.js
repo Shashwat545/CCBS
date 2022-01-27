@@ -29,11 +29,10 @@ const ExpandMore = styled((props) => {
 
 export default function RecipeReviewCard(props) {
     const [expanded, setExpanded] = React.useState(false);
-
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
-
+    const [obj, setObj] = React.useState(props.data);
     return (
         <>
             <Card sx={{ maxWidth: 345, backgroundColor: '#E3F2FD' }}>
@@ -48,15 +47,13 @@ export default function RecipeReviewCard(props) {
                             <MoreVertIcon />
                         </IconButton>
                     }
-                    title="Shrimp and ChorizoPaella"
-                    subheader="September 14, 2016"
+                    title={obj.reason}
+                    subheader="Booked on date will come here"
                 />
-
+                &nbsp; startTime = {obj.startTime} <br />
+                &nbsp; endTime = {obj.endTime} <br />
                 <CardContent>
-                    <Typography variant="body2" color="text.secondary">
-                        This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen
-                        peas along with the mussels, if you like.
-                    </Typography>
+                    <Typography variant="body2" color="text.secondary"></Typography>
                 </CardContent>
                 <CardActions disableSpacing>
                     {props.el} &nbsp;

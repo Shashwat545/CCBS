@@ -169,24 +169,11 @@ export default function MaterialUIPickers() {
             !DisplayNotificationTime &&
             !EndTimeTouch &&
             DisplayNotificationReason;
-        console.log(
-            DisplayNotificationDate,
-            StartDateTouch,
-            DisplayNotificationDate,
-            EndTimeTouch,
-            DisplayNotificationTime,
-            StartTimeTouch,
-            DisplayNotificationTime,
-            EndTimeTouch,
-            DisplayNotificationReason,
-            isFormValidated,
-            'Form Checker'
-        );
+
         if (!ReasonForRegistration) return;
 
         try {
             const data = await axios.post('http://localhost:8000/api/v1/bookings/createBooking', body);
-            console.log(data);
             navigate('/free/pages/profile-page', { replace: true });
 
             //Add in the userBooking also
@@ -232,7 +219,6 @@ export default function MaterialUIPickers() {
                                                 <AlertTitle>Error</AlertTitle>
                                                 Start Date is more than End Date
                                             </Alert>
-                                            {/* {console.log(DisplayNotificationDate, StartDateTouch)}{' '} */}
                                         </>
                                     ) : (
                                         <></>

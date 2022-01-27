@@ -94,9 +94,10 @@ const createBooking = async (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-    });
-     req.user = await userModel.findById("61b9d1dd4ce21a9d62a0f2a2");*/
-     
+    });*/
+  // req.user = await userModel.findById("61cac6fe09d781b9ce072bf3");
+
+  
   //Creating a newBooking object
   const newBooking = {
     startTime: new Date(req.body.startTime),

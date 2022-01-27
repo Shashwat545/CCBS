@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Stack from '@mui/material/Stack';
 import { Grid } from '@mui/material';
 import { Button } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
 import DeviceIdentifier from './DeviceIdentifier';
 import { Card, CardContent, Divider } from '@mui/material';
 import Cardx from './Card';
@@ -11,32 +13,55 @@ import { Paper } from '@mui/material';
 import { Box } from '@mui/system';
 import { TransitionGroup } from 'react-transition-group';
 import { Collapse } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
-import CheckIcon from '@mui/icons-material/Check';
+import axios from 'axios';
+
 export default function MaterialUIPickers() {
-    const handleRemoveItem = (item) => {
-        setInputArr((prev) => [...prev.filter((i) => i !== item)]);
-    };
-    const [InputArr, setInputArr] = React.useState(['Prateek', 'Sashwat', 'Rishvic', 'Omkar', 'Ritik']);
+    const [InputArr, setInputArr] = React.useState(['Prateek', 'Sashwat', 'Omkar', 'Ritik']);
     const [CollapseChecker1, setCollapseChecker1] = React.useState(false);
+    const [requestFromAdmins, setrequestFromAdmins] = React.useState([]);
     const [adminDisplay, setadminDisplay] = React.useState(false);
     const [nonAdminDisplay, setNonAdminDisplay] = React.useState(false);
     const [CollapseChecker2, setCollapseChecker2] = React.useState(false);
+
+    useEffect(() => {
+        const getData = () => {
+            axios
+                .get('http://localhost:8000/api/v1/bookings/', { withCredentials: true })
+                .then((res) => {
+                    setrequestFromAdmins(res.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        };
+        getData();
+    }, []);
+
+    const handleRemoveItem = async (event) => {
+        const value = event.nativeEvent.target.value;
+        if (value) {
+            const status = value.split(' ')[0];
+            const bookingId = value.split(' ')[1];
+            const data = await axios.get(`http://localhost:8000/api/v1/approval/${status}/${bookingId}`);
+
+            //This is not working in any case delete only last booking 
+            // setrequestFromAdmins((prev) => [...prev.filter((i) => i._id.toString() !== bookingId)]);
+        }
+    };
     let dk = 0;
     function renderItem({ item, handleRemoveItem }) {
         dk += 1;
-
         return (
             <Collapse style={{ paddingBottom: '10px' }} in={adminDisplay} easing={{ enter: `${dk * 10} `, exit: `${dk * 10}` }}>
                 <Cardx
                     el={
                         <>
                             {' '}
-                            <Button variant="outlined" onClick={() => handleRemoveItem(item)}>
+                            <Button variant="outlined" value={`reject ${item._id}`} onClick={handleRemoveItem}>
                                 {' Reject Request     '} &nbsp;
                                 <DeleteIcon />
                             </Button>
@@ -44,13 +69,12 @@ export default function MaterialUIPickers() {
                     }
                     el2={
                         <>
-                            {' '}
-                            <Button variant="outlined" onClick={() => handleRemoveItem(item)}>
-                                {'Accept Request'} &nbsp;
-                                <CheckIcon />
+                            <Button variant="outlined" value={`accept ${item._id}`} onClick={handleRemoveItem}>
+                                {'Accept Request'} &nbsp; <CheckIcon />
                             </Button>
                         </>
                     }
+                    data={item}
                 />
             </Collapse>
         );
@@ -79,6 +103,7 @@ export default function MaterialUIPickers() {
                             </Button>
                         </>
                     }
+                    data={item}
                 />
             </Collapse>
         );
@@ -102,6 +127,7 @@ export default function MaterialUIPickers() {
     }
     function handleClickAdmins() {
         dk = 0;
+        console.log('handle click admin pressed');
         setadminDisplay(!adminDisplay);
     }
     return (
@@ -114,7 +140,6 @@ export default function MaterialUIPickers() {
                                 {' '}
                                 <Typography variant="h1">Pending Requests </Typography>
                             </div>
-
                             <div
                                 style={{
                                     paddingLeft: '18px',
@@ -132,14 +157,9 @@ export default function MaterialUIPickers() {
                                     Pending Requests from Profs
                                 </Button>
                             </div>
-
                             <Stack spacing={1} style={{ backgroundColor: '' }}>
                                 <TransitionGroup>
-                                    {InputArr.map((item) => (
-                                        <Collapse key={item} dimension="width">
-                                            {renderItem({ item, handleRemoveItem })}
-                                        </Collapse>
-                                    ))}
+                                    {requestFromAdmins.map((item) => adminDisplay && item && renderItem({ item, handleRemoveItem }))}
                                 </TransitionGroup>
                             </Stack>
                             <div
@@ -160,14 +180,11 @@ export default function MaterialUIPickers() {
                                     Pending Requests from non-Admins
                                 </Button>
                             </div>
-
                             <Stack spacing={1}>
                                 <TransitionGroup>
-                                    {InputArr.map((item) => (
-                                        <Collapse key={item} dimension="width">
-                                            {renderItemForNonAdmins({ item, handleRemoveItem })}
-                                        </Collapse>
-                                    ))}
+                                    {requestFromAdmins.map((item) =>
+                                        adminDisplay && item ? renderItem({ item, handleRemoveItem }) : <></>
+                                    )}
                                 </TransitionGroup>
                             </Stack>
                         </CardContent>
@@ -175,6 +192,7 @@ export default function MaterialUIPickers() {
                 </Grid>
             </DeviceIdentifier>
             <DeviceIdentifier isDesktop={true}>
+                {console.log('FOR DESKTOP')}
                 <div style={{ alignItems: 'center', backgroundColor: '', justifyContent: 'center', display: 'flex' }}>
                     <Card style={{ backgroundColor: '', display: 'inline-block' }}>
                         <CardContent style={{ backgroundColor: '', display: 'inline-block' }}>
@@ -216,13 +234,13 @@ export default function MaterialUIPickers() {
                                                     </Button>
                                                 </div>
                                             </Grid>
-                                            <Grid item xs={12}>
+                                            <Grid item xs={12} style={{ backgroundColor: '' }}>
                                                 <TransitionGroup>
-                                                    {InputArr.map((item) => (
-                                                        <Collapse key={item} dimension="width">
-                                                            {renderItem({ item, handleRemoveItem })}
-                                                        </Collapse>
-                                                    ))}
+                                                    {requestFromAdmins.map((item) =>
+                                                        adminDisplay && item
+                                                            ? renderItem({ item, handleRemoveItem })
+                                                            : adminDisplay && <p>No to Show</p>
+                                                    )}
                                                 </TransitionGroup>
                                             </Grid>
                                         </Grid>
@@ -255,13 +273,11 @@ export default function MaterialUIPickers() {
                                                     </Button>
                                                 </div>
                                             </Grid>
-                                            <Grid item xs={12} style={{}}>
+                                            <Grid item xs={12} style={{ backgroundColor: '' }}>
                                                 <TransitionGroup>
-                                                    {InputArr.map((item) => (
-                                                        <Collapse key={item} dimension="width">
-                                                            {renderItemForNonAdmins({ item, handleRemoveItem })}
-                                                        </Collapse>
-                                                    ))}
+                                                    {requestFromAdmins.map((item) =>
+                                                        adminDisplay && item ? renderItemForNonAdmins({ item, handleRemoveItem }) : <></>
+                                                    )}
                                                 </TransitionGroup>
                                             </Grid>
                                         </Grid>
