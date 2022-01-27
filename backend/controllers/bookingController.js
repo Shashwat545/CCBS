@@ -22,7 +22,7 @@ const getAllBookings = async (req, res) => {
   }
 
   try {
-    const bookings = await bookingModel.find(bookingFilter);
+    const bookings = await bookingModel.find(bookingFilter).populate("bookedBy");
     res.status(200).json(bookings);
   } catch (err) {
     res.status(500).send(err);
