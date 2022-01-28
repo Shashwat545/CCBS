@@ -59,20 +59,13 @@ export default function MaterialUIPickers() {
     }, []);
 
     const handleRemoveItem = async (event) => {
-        console.log('hue');
-        console.log(event);
-        const value = event;
+        const value = event.nativeEvent.target.value;
         if (value) {
-            var status = 'accepted';
-            for (let i in value.approvedBy) {
-                if (value.approvedBy[i] == 'pending') status = 'pending';
-            }
-            const bookingId = value._id;
-            console.log(status, bookingId);
+            const status = value.split(' ')[0];
+            const bookingId = value.split(' ')[1];
             const data = await axios.get(`http://localhost:8000/api/v1/approval/${status}/${bookingId}`);
 
-            console.log(data);
-            //This is not working in any case delete only last booking
+            //This is not working in any case delete only last booking 
             // setrequestFromAdmins((prev) => [...prev.filter((i) => i._id.toString() !== bookingId)]);
         }
     };
