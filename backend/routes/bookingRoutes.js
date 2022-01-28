@@ -12,12 +12,32 @@ router.get(
   bookingController.getAllBookings
 );
 
-router.get("/:bookingId", bookingController.getOneBooking);
+router.get(
+  "/:bookingId",
+  isAuthenticated,
+  getBookingSchema,
+  bookingController.getOneBooking
+);
 
-router.post("/createBooking", bookingController.createBooking);
+router.post(
+  "/createBooking",
+  isAuthenticated,
+  getBookingSchema,
+  bookingController.createBooking
+);
 
-router.delete("/:bookingId", bookingController.deleteBooking);
+router.delete(
+  "/:bookingId",
+  isAuthenticated,
+  getBookingSchema,
+  bookingController.deleteBooking
+);
 
-router.patch("/:bookingId", bookingController.updateBooking);
+router.patch(
+  "/:bookingId",
+  isAuthenticated,
+  getBookingSchema,
+  bookingController.updateBooking
+);
 
 module.exports = router;

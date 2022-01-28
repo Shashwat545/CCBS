@@ -83,3 +83,11 @@ exports.getApprovalStatus = async (req, res) => {
     }
   }
 };
+
+exports.isSuperAdmin=(req,res,next)=>{
+  if (req.user.role==="superAdmin") {
+    next();
+  } else {
+    next(createError(401));
+  }
+}
