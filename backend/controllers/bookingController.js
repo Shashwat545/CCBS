@@ -45,6 +45,7 @@ const sendBookingRequest = async (
   conflictbookingId = null,
   user = null
 ) => {
+  console.log(isBooking, booking, conflictbookingId);
   try {
     if (!isBooking) {
       res
@@ -81,9 +82,9 @@ const createBooking = async (req, res) => {
      -> allow booking and send for approval*/
 
   //To create Dummy user for checking purpose
-  /* const user = new userModel({
-    emailId: "abc@iitbb.ac.in",
-    userName: "Ritik",
+  const user = new userModel({
+    emailId: "20cs01046@iitbb.ac.in",
+    userName: "Itz Prateek",
     phoneNo: "8909876578",
     role: "superAdmin",
   });
@@ -94,16 +95,16 @@ const createBooking = async (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-    });*/
+    });
   // req.user = await userModel.findById("61cac6fe09d781b9ce072bf3");
 
-  
   //Creating a newBooking object
+  console.log("req.user= ", req.user);
   const newBooking = {
     startTime: new Date(req.body.startTime),
     endTime: new Date(req.body.endTime),
     reason: req.body.reason,
-    bookedBy: req.user, //it will req.user that is created at the start of the session and for checking it will be replaced by user
+    bookedBy: user, //it will req.user that is created at the start of the session and for checking it will be replaced by user
   };
   //This will find all the existing booking
   const allbookings = await bookingModel.find();
@@ -122,6 +123,7 @@ const createBooking = async (req, res) => {
     "There are already slots booked on those days so book other slots";
   //This will check for conflict booking and if it exist then it will populate the details of the booking and proceed according to main idea
   if (conflictbookings.length > 0) {
+    console.log(message);
     conflictbookings.map((user) =>
       user.populate("bookedBy").then((conflictbooking) => {
         let isConflictBookingApproved = false,

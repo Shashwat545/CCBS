@@ -12,8 +12,8 @@ exports.getSuperAdmin = (req, res) => {
 
 exports.getApprovalStatus = async (req, res) => {
   const status = req.params.status;
-  const userRole = req.user.role;
-  // const userRole = "superAdmin";
+  // const userRole = req.user.role;
+  const userRole = "superAdmin";
 
   if (userRole !== "superAdmin")
     res.status(401).send("You are not authorized to this");

@@ -23,6 +23,7 @@ export default function MaterialUIPickers() {
     const [InputArr, setInputArr] = React.useState(['Prateek', 'Sashwat', 'Omkar', 'Ritik']);
     const [CollapseChecker1, setCollapseChecker1] = React.useState(false);
     const [requestFromAdmins, setrequestFromAdmins] = React.useState([]);
+    const [requestFromNonAdmins, setrequestFromNonAdmins] = React.useState([]);
     const [adminDisplay, setadminDisplay] = React.useState(false);
     const [nonAdminDisplay, setNonAdminDisplay] = React.useState(false);
     const [CollapseChecker2, setCollapseChecker2] = React.useState(false);
@@ -33,6 +34,22 @@ export default function MaterialUIPickers() {
                 .get('http://localhost:8000/api/v1/bookings/', { withCredentials: true })
                 .then((res) => {
                     setrequestFromAdmins(res.data);
+                    console.log(res.data);
+                    var dk = [];
+                    for (let i in res.data) {
+                        console.log(res.data[i], 'hello ');
+                        var hasmap = {};
+                        hasmap['pending'] = 0;
+                        hasmap['accepted'] = 0;
+                        for (let j in res.data[i].approvedBy) {
+                            hasmap[res.data[i].approvedBy[j]] += 1;
+                            console.log(typeof res.data[i].approvedBy[j], 'hue');
+                        }
+                        console.log(hasmap);
+                        if (hasmap['pending'] != 3) dk.push(res.data[i]);
+                    }
+                    console.log('dk=', dk);
+                    setrequestFromAdmins(dk);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -42,13 +59,20 @@ export default function MaterialUIPickers() {
     }, []);
 
     const handleRemoveItem = async (event) => {
-        const value = event.nativeEvent.target.value;
+        console.log('hue');
+        console.log(event);
+        const value = event;
         if (value) {
-            const status = value.split(' ')[0];
-            const bookingId = value.split(' ')[1];
+            var status = 'accepted';
+            for (let i in value.approvedBy) {
+                if (value.approvedBy[i] == 'pending') status = 'pending';
+            }
+            const bookingId = value._id;
+            console.log(status, bookingId);
             const data = await axios.get(`http://localhost:8000/api/v1/approval/${status}/${bookingId}`);
 
-            //This is not working in any case delete only last booking 
+            console.log(data);
+            //This is not working in any case delete only last booking
             // setrequestFromAdmins((prev) => [...prev.filter((i) => i._id.toString() !== bookingId)]);
         }
     };
@@ -61,7 +85,7 @@ export default function MaterialUIPickers() {
                     el={
                         <>
                             {' '}
-                            <Button variant="outlined" value={`reject ${item._id}`} onClick={handleRemoveItem}>
+                            <Button variant="outlined" value={`reject ${item._id}`} onClick={() => handleRemoveItem(item)}>
                                 {' Reject Request     '} &nbsp;
                                 <DeleteIcon />
                             </Button>
@@ -69,7 +93,7 @@ export default function MaterialUIPickers() {
                     }
                     el2={
                         <>
-                            <Button variant="outlined" value={`accept ${item._id}`} onClick={handleRemoveItem}>
+                            <Button variant="outlined" value={`accept ${item._id}`} onClick={() => handleRemoveItem(item)}>
                                 {'Accept Request'} &nbsp; <CheckIcon />
                             </Button>
                         </>
