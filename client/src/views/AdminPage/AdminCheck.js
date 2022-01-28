@@ -48,8 +48,15 @@ export default function MaterialUIPickers() {
                         console.log(hasmap);
                         if (hasmap['pending'] != 3) dk.push(res.data[i]);
                     }
+                    var nonAdmin = [];
+                    var admin = [];
+                    for (let i in dk) {
+                        if (dk[i].bookedBy.role === 'student') nonAdmin.push(dk[i]);
+                        else admin.push(dk[i]);
+                    }
                     console.log('dk=', dk);
-                    setrequestFromAdmins(dk);
+                    setrequestFromAdmins(admin);
+                    setrequestFromNonAdmins(nonAdmin);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -65,7 +72,7 @@ export default function MaterialUIPickers() {
             const bookingId = value.split(' ')[1];
             const data = await axios.get(`http://localhost:8000/api/v1/approval/${status}/${bookingId}`);
 
-            //This is not working in any case delete only last booking 
+            //This is not working in any case delete only last booking
             // setrequestFromAdmins((prev) => [...prev.filter((i) => i._id.toString() !== bookingId)]);
         }
     };
@@ -199,7 +206,7 @@ export default function MaterialUIPickers() {
                             </div>
                             <Stack spacing={1}>
                                 <TransitionGroup>
-                                    {requestFromAdmins.map((item) =>
+                                    {requestFromNonAdmins.map((item) =>
                                         adminDisplay && item ? renderItem({ item, handleRemoveItem }) : <></>
                                     )}
                                 </TransitionGroup>
@@ -292,7 +299,7 @@ export default function MaterialUIPickers() {
                                             </Grid>
                                             <Grid item xs={12} style={{ backgroundColor: '' }}>
                                                 <TransitionGroup>
-                                                    {requestFromAdmins.map((item) =>
+                                                    {requestFromNonAdmins.map((item) =>
                                                         adminDisplay && item ? renderItemForNonAdmins({ item, handleRemoveItem }) : <></>
                                                     )}
                                                 </TransitionGroup>
