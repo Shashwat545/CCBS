@@ -161,7 +161,7 @@ const createBooking = async (req, res) => {
             sendBookingRequest(true, newBooking, res, null, req.user);
             //mail the admin that his booking is confirmed
             const sentMail = await nodemailer.transporter.sendMail(
-              nodemailer.bookingConfirmation(conflictingBooking,newBooking)
+              nodemailer.waitForConfirmation(conflictingBooking,newBooking)
             );
           }
           else if (conflictbooking.bookedBy.role === "student") {
