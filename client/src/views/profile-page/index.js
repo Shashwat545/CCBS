@@ -16,6 +16,7 @@ import User_DP from 'assets/images/User_Profile.png';
 import App from './App';
 import FormikForm from './FormikForm';
 import axios from 'axios';
+import BookingHistory from './BookingHistory';
 
 // =========================z=====|| PROFILE PAGE ||============================== //
 
@@ -78,9 +79,11 @@ const ProfilePage = () => {
         <MainCard>
             <Grid container spacing={gridSpacing}>
                 <Grid item xs={12} sm={4}>
-                    <SubCard>
+                    <MainCard>
                         <Grid container direction="column" spacing={1}>
                             <Grid item align="center">
+                            <MuiTypography variant="h1" gutterBottom>User Profile</MuiTypography>
+                                <br />
                                 <img src={User_DP} alt="User Profile" width="100px" style={{ borderRadius: '50%' }} />
                                 <MuiTypography variant="h1" gutterBottom></MuiTypography>
                             </Grid>
@@ -90,22 +93,12 @@ const ProfilePage = () => {
                                 </div>
                                 <MuiTypography variant="h1" gutterBottom></MuiTypography>
                             </Grid>
-                            <Grid item>
-                                <MuiTypography variant="h3" gutterBottom></MuiTypography>
-                            </Grid>
-                            <Grid item>
-                                <MuiTypography variant="h3" gutterBottom></MuiTypography>
-                            </Grid>
-                            <Grid item>
-                                <MuiTypography variant="h3" gutterBottom></MuiTypography>
-                            </Grid>
-                            <Grid item>
-                                <MuiTypography variant="h3" gutterBottom></MuiTypography>
-                            </Grid>
                         </Grid>
-                    </SubCard>
+                    </MainCard>
                 </Grid>
-                <SubCard title="Booking History">{bookingContent}</SubCard>
+                <Grid item xs={12} sm={8}>
+                <BookingHistory />
+                </Grid>
             </Grid>
         </MainCard>
     );
