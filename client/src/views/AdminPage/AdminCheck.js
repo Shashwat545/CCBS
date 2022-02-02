@@ -34,19 +34,15 @@ export default function MaterialUIPickers() {
                 .get('http://localhost:8000/api/v1/bookings/', { withCredentials: true })
                 .then((res) => {
                     setrequestFromAdmins(res.data);
-                    console.log(res.data);
                     var dk = [];
                     for (let i in res.data) {
-                        console.log(res.data[i], 'hello ');
                         var hasmap = {};
                         hasmap['pending'] = 0;
                         hasmap['accepted'] = 0;
                         for (let j in res.data[i].approvedBy) {
                             hasmap[res.data[i].approvedBy[j]] += 1;
-                            console.log(typeof res.data[i].approvedBy[j], 'hue');
                         }
-                        console.log(hasmap);
-                        if (hasmap['pending'] != 3) dk.push(res.data[i]);
+                        if (hasmap['accepted'] != 3) dk.push(res.data[i]);
                     }
                     var nonAdmin = [];
                     var admin = [];
@@ -54,7 +50,6 @@ export default function MaterialUIPickers() {
                         if (dk[i].bookedBy.role === 'student') nonAdmin.push(dk[i]);
                         else admin.push(dk[i]);
                     }
-                    console.log('dk=', dk);
                     setrequestFromAdmins(admin);
                     setrequestFromNonAdmins(nonAdmin);
                 })
@@ -67,6 +62,7 @@ export default function MaterialUIPickers() {
 
     const handleRemoveItem = async (event) => {
         const value = event.nativeEvent.target.value;
+        console.log(value, event);
         if (value) {
             const status = value.split(' ')[0];
             const bookingId = value.split(' ')[1];
@@ -85,7 +81,7 @@ export default function MaterialUIPickers() {
                     el={
                         <>
                             {' '}
-                            <Button variant="outlined" value={`reject ${item._id}`} onClick={() => handleRemoveItem(item)}>
+                            <Button variant="outlined" value={`reject ${item._id}`} onClick={handleRemoveItem}>
                                 {' Reject Request     '} &nbsp;
                                 <DeleteIcon />
                             </Button>
@@ -93,7 +89,7 @@ export default function MaterialUIPickers() {
                     }
                     el2={
                         <>
-                            <Button variant="outlined" value={`accept ${item._id}`} onClick={() => handleRemoveItem(item)}>
+                            <Button variant="outlined" value={`accept ${item._id}`} onClick={handleRemoveItem}>
                                 {'Accept Request'} &nbsp; <CheckIcon />
                             </Button>
                         </>
@@ -105,14 +101,13 @@ export default function MaterialUIPickers() {
     }
     function renderItemForNonAdmins({ item, handleRemoveItem }) {
         dk += 1;
-
         return (
             <Collapse style={{ paddingBottom: '10px' }} in={nonAdminDisplay} easing={{ enter: `${dk * 10} `, exit: `${dk * 10}` }}>
                 <Cardx
                     el={
                         <>
                             {' '}
-                            <Button variant="outlined" onClick={() => handleRemoveItem(item)}>
+                            <Button variant="outlined" value={`reject ${item._id}`} onClick={handleRemoveItem}>
                                 {' Reject Request     '} &nbsp;
                                 <DeleteIcon />
                             </Button>
@@ -121,7 +116,7 @@ export default function MaterialUIPickers() {
                     el2={
                         <>
                             {' '}
-                            <Button variant="outlined" onClick={() => handleRemoveItem(item)}>
+                            <Button variant="outlined" value={`accept ${item._id}`} onClick={handleRemoveItem}>
                                 {'Accept Request'} &nbsp;
                                 <CheckIcon />
                             </Button>
@@ -151,7 +146,6 @@ export default function MaterialUIPickers() {
     }
     function handleClickAdmins() {
         dk = 0;
-        console.log('handle click admin pressed');
         setadminDisplay(!adminDisplay);
     }
     return (
@@ -183,7 +177,11 @@ export default function MaterialUIPickers() {
                             </div>
                             <Stack spacing={1} style={{ backgroundColor: '' }}>
                                 <TransitionGroup>
-                                    {requestFromAdmins.map((item) => adminDisplay && item && renderItem({ item, handleRemoveItem }))}
+                                    {requestFromAdmins.length > 0 ? (
+                                        requestFromAdmins.map((item) => adminDisplay && item && renderItem({ item, handleRemoveItem }))
+                                    ) : (
+                                        <p>No pending requests</p>
+                                    )}
                                 </TransitionGroup>
                             </Stack>
                             <div
@@ -206,8 +204,12 @@ export default function MaterialUIPickers() {
                             </div>
                             <Stack spacing={1}>
                                 <TransitionGroup>
-                                    {requestFromNonAdmins.map((item) =>
-                                        adminDisplay && item ? renderItem({ item, handleRemoveItem }) : <></>
+                                    {requestFromNonAdmins.length > 0 ? (
+                                        requestFromNonAdmins.map((item) =>
+                                            nonAdminDisplay && item ? renderItemForNonAdmins({ item, handleRemoveItem }) : <></>
+                                        )
+                                    ) : (
+                                        <p>No pending request</p>
                                     )}
                                 </TransitionGroup>
                             </Stack>
@@ -216,7 +218,6 @@ export default function MaterialUIPickers() {
                 </Grid>
             </DeviceIdentifier>
             <DeviceIdentifier isDesktop={true}>
-                {console.log('FOR DESKTOP')}
                 <div style={{ alignItems: 'center', backgroundColor: '', justifyContent: 'center', display: 'flex' }}>
                     <Card style={{ backgroundColor: '', display: 'inline-block' }}>
                         <CardContent style={{ backgroundColor: '', display: 'inline-block' }}>
@@ -260,10 +261,14 @@ export default function MaterialUIPickers() {
                                             </Grid>
                                             <Grid item xs={12} style={{ backgroundColor: '' }}>
                                                 <TransitionGroup>
-                                                    {requestFromAdmins.map((item) =>
-                                                        adminDisplay && item
-                                                            ? renderItem({ item, handleRemoveItem })
-                                                            : adminDisplay && <p>No to Show</p>
+                                                    {requestFromAdmins.length > 0 ? (
+                                                        requestFromAdmins.map((item) =>
+                                                            adminDisplay && item
+                                                                ? renderItem({ item, handleRemoveItem })
+                                                                : adminDisplay && <p>No to Show</p>
+                                                        )
+                                                    ) : (
+                                                        <p>No pending requests</p>
                                                     )}
                                                 </TransitionGroup>
                                             </Grid>
@@ -299,8 +304,16 @@ export default function MaterialUIPickers() {
                                             </Grid>
                                             <Grid item xs={12} style={{ backgroundColor: '' }}>
                                                 <TransitionGroup>
-                                                    {requestFromNonAdmins.map((item) =>
-                                                        adminDisplay && item ? renderItemForNonAdmins({ item, handleRemoveItem }) : <></>
+                                                    {requestFromNonAdmins.length > 0 ? (
+                                                        requestFromNonAdmins.map((item) =>
+                                                            nonAdminDisplay && item ? (
+                                                                renderItemForNonAdmins({ item, handleRemoveItem })
+                                                            ) : (
+                                                                <></>
+                                                            )
+                                                        )
+                                                    ) : (
+                                                        <p>No Pending requests</p>
                                                     )}
                                                 </TransitionGroup>
                                             </Grid>

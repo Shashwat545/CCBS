@@ -34,7 +34,6 @@ export default function RecipeReviewCard(props) {
     arraySplitForEndTime[1] = arraySplitForEndTime[1].substring(0, arraySplitForEndTime[1].length - 5).split(':');
     arraySplitForStartTime[0] = arraySplitForStartTime[0].split('-').reverse();
     arraySplitForEndTime[0] = arraySplitForEndTime[0].split('-').reverse();
-    console.log(arraySplitForEndTime[1], 'hue');
     if (arraySplitForStartTime[1][0] > '12') {
         arraySplitForStartTime[1][0] = (parseInt(arraySplitForStartTime[1][0]) - 12).toString();
         arraySplitForStartTime[1].push('PM');
@@ -52,7 +51,6 @@ export default function RecipeReviewCard(props) {
     };
     return (
         <>
-            {console.log(arraySplitForStartTime, arraySplitForEndTime)}
             <Card sx={{ maxWidth: 345, backgroundColor: '#E3F2FD' }}>
                 <CardHeader
                     avatar={
