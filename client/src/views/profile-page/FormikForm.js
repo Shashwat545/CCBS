@@ -49,6 +49,15 @@ class MaintenanceForm extends Component {
         return (
             <React.Fragment>
                 <div className="form-group row">
+                    <label className="col-sm-2 col-form-label">Role:</label>
+                    <div className="col-sm-10">
+                        <label type="text" name="device_type2" className="role_field">
+                            {this?.props?.fields?.role}
+                        </label>
+                    </div>
+                </div>
+                <br />
+                <div className="form-group row">
                     <label className="col-sm-2 col-form-label">Name:</label>
                     <div className="col-sm-10">
                         <label type="text" name="name" className="name_field">
@@ -121,6 +130,7 @@ const FormikForm = withFormik({
     },
     mapPropsToValues: (props) => {
         return {
+            role: props.fields.role,
             name: props.fields.userName,
             email: props.fields.emailId,
             mobile_no: props.fields.phoneNo
