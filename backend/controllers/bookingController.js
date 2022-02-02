@@ -22,7 +22,9 @@ const getAllBookings = async (req, res) => {
   }
 
   try {
-    const bookings = await bookingModel.find(bookingFilter).populate("bookedBy");
+    const bookings = await bookingModel
+      .find(bookingFilter)
+      .populate("bookedBy");
     res.status(200).json(bookings);
   } catch (err) {
     res.status(500).send(err);
@@ -56,9 +58,16 @@ const sendBookingRequest = async (
       if (conflictbookingId != null)
         await bookingModel.findByIdAndRemove(conflictbookingId);
       const bookRequest = await bookingModel.create(booking);
+
       const bookingUser = await userModel.findById(user._id);
       bookingUser.bookings.unshift(bookRequest);
       bookingUser.save();
+
+      if (bookingUser.role === "superAdmin") {
+        for (let superAdmin in bookRequest.approvedBy)
+          bookRequest.approvedBy[superAdmin] = "accepted";
+        bookRequest.save();
+      }
       res.status(200).json(bookRequest);
     }
   } catch (err) {
@@ -97,7 +106,6 @@ const createBooking = async (req, res) => {
     });*/
   // req.user = await userModel.findById("61cac6fe09d781b9ce072bf3");
 
-  
   //Creating a newBooking object
   const newBooking = {
     startTime: new Date(req.body.startTime),

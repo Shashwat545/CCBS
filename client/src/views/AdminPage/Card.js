@@ -14,25 +14,41 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Button } from '@mui/material';
-
-const ExpandMore = styled((props) => {
-    const { expand, ...other } = props;
-    return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-        duration: theme.transitions.duration.shortest
-    })
-}));
-
+import { ListItemButton, ListItemIcon, ListItemText, List } from '@mui/material';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import StarBorder from '@mui/icons-material/StarBorder';
+import AccessTime from '@mui/icons-material/AccessTime';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowRight';
 export default function RecipeReviewCard(props) {
     const [expanded, setExpanded] = React.useState(false);
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
     const [obj, setObj] = React.useState(props.data);
+    const [open, setOpen] = React.useState(false);
+    var arraySplitForStartTime = obj.startTime.split('T');
+    arraySplitForStartTime[1] = arraySplitForStartTime[1].substring(0, arraySplitForStartTime[1].length - 5).split(':');
+    var arraySplitForEndTime = obj.endTime.split('T');
+    arraySplitForEndTime[1] = arraySplitForEndTime[1].substring(0, arraySplitForEndTime[1].length - 5).split(':');
+    arraySplitForStartTime[0] = arraySplitForStartTime[0].split('-').reverse();
+    arraySplitForEndTime[0] = arraySplitForEndTime[0].split('-').reverse();
+    if (arraySplitForStartTime[1][0] > '12') {
+        arraySplitForStartTime[1][0] = (parseInt(arraySplitForStartTime[1][0]) - 12).toString();
+        arraySplitForStartTime[1].push('PM');
+    } else {
+        arraySplitForStartTime[1].push('AM');
+    }
+    if (arraySplitForEndTime[1][0] > '12') {
+        arraySplitForEndTime[1][0] = (parseInt(arraySplitForEndTime[1][0]) - 12).toString();
+        arraySplitForEndTime[1].push('PM');
+    } else {
+        arraySplitForEndTime[1].push('AM');
+    }
+    const handleClick = () => {
+        setOpen(!open);
+    };
     return (
         <>
             <Card sx={{ maxWidth: 345, backgroundColor: '#E3F2FD' }}>
@@ -47,14 +63,54 @@ export default function RecipeReviewCard(props) {
                             <MoreVertIcon />
                         </IconButton>
                     }
-                    title={obj.reason}
-                    subheader="Booked on date will come here"
+                    title={obj.reason + ' ~~ Reason For Booking'}
+                    subheader={`Booked by ${obj.bookedBy.userName}`}
                 />
-                &nbsp; startTime = {obj.startTime} <br />
-                &nbsp; endTime = {obj.endTime} <br />
-                <CardContent>
-                    <Typography variant="body2" color="text.secondary"></Typography>
-                </CardContent>
+                <ListItemButton onClick={handleClick}>
+                    <ListItemIcon>
+                        <AccessTime />
+                    </ListItemIcon>
+                    <ListItemText>
+                        <Typography variant="heading">Click to see booking timings</Typography>
+                    </ListItemText>
+                    {open ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                        <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemText style={{ paddingLeft: '0px' }}>
+                                <Typography variant="heading">{`Start Date for booking =  `}</Typography>
+
+                                <Typography variant="subHeading">{`${arraySplitForStartTime[0][0]} : ${arraySplitForStartTime[0][1]} : ${arraySplitForStartTime[0][2]}`}</Typography>
+                            </ListItemText>
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemText style={{ paddingLeft: '0px' }}>
+                                <Typography variant="heading">{`Start Time for booking =  `}</Typography>
+
+                                <Typography variant="subHeading">
+                                    {`${arraySplitForStartTime[1][0]}:${arraySplitForStartTime[1][1]}:${arraySplitForStartTime[1][2]} ${arraySplitForStartTime[1][3]}`}{' '}
+                                </Typography>
+                            </ListItemText>
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemText style={{ paddingLeft: '0px' }}>
+                                <Typography variant="heading">{`End Date for booking =  `}</Typography>
+
+                                <Typography variant="subHeading">{`${arraySplitForEndTime[0][0]} : ${arraySplitForEndTime[0][1]} : ${arraySplitForEndTime[0][2]}`}</Typography>
+                            </ListItemText>
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemText style={{ paddingLeft: '0px' }}>
+                                <Typography variant="heading">{`End Time for booking =  `}</Typography>
+
+                                <Typography variant="subHeading">
+                                    {`${arraySplitForEndTime[1][0]}:${arraySplitForEndTime[1][1]}:${arraySplitForEndTime[1][2]} ${arraySplitForEndTime[1][3]}`}{' '}
+                                </Typography>
+                            </ListItemText>
+                        </ListItemButton>
+                    </List>
+                </Collapse>
                 <CardActions disableSpacing>
                     {props.el} &nbsp;
                     {props.el2}
