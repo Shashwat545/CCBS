@@ -68,7 +68,11 @@ const ProfilePage = () => {
                     </MainCard>
                 </Grid>
                 <Grid item xs={12} sm={8}>
-                    {!isEmpty(fields)&&fields.bookings.length > 0 ? <BookingHistory bookingData={fields.bookings} /> : <p>Nothing to show</p>}
+                    {!isEmpty(fields) && fields.bookings.length > 0 ? (
+                        <BookingHistory bookingData={fields.bookings} />
+                    ) : (
+                        <p>Nothing to show</p>
+                    )}
                 </Grid>
             </Grid>
         </MainCard>
