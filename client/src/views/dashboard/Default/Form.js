@@ -16,7 +16,7 @@ import ListItem from '@mui/material/ListItem';
 import DeviceIdentifier from './DeviceIdentifier';
 import { Card, CardContent, Divider } from '@mui/material';
 import { Typography } from '@mui/material';
-import axios from 'axios';
+import axiosInstance from '../../../services/axiosInstance';
 export default function MaterialUIPickers() {
     var localDate = new Date();
     const navigate = useNavigate();
@@ -173,7 +173,7 @@ export default function MaterialUIPickers() {
         if (!ReasonForRegistration) return;
 
         try {
-            const data = await axios.post('http://localhost:8000/api/v1/bookings/createBooking', body);
+            const data = await axiosInstance.post('http://localhost:8000/api/v1/bookings/createBooking', body);
             navigate('/free/pages/profile-page', { replace: true });
             //Add in the userBooking also
         } catch (err) {

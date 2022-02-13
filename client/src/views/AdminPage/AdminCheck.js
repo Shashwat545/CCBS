@@ -17,7 +17,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
-import axios from 'axios';
+import axiosInstance from '../../services/axiosInstance';
 
 export default function MaterialUIPickers() {
     const [InputArr, setInputArr] = React.useState(['Prateek', 'Sashwat', 'Omkar', 'Ritik']);
@@ -30,8 +30,8 @@ export default function MaterialUIPickers() {
 
     useEffect(() => {
         const getData = () => {
-            axios
-                .get('http://localhost:8000/api/v1/bookings/', { withCredentials: true })
+            axiosInstance
+                .get('http://localhost:8000/api/v1/bookings/')
                 .then((res) => {
                     setrequestFromAdmins(res.data);
                     var dk = [];
@@ -66,7 +66,7 @@ export default function MaterialUIPickers() {
         if (value) {
             const status = value.split(' ')[0];
             const bookingId = value.split(' ')[1];
-            const data = await axios.get(`http://localhost:8000/api/v1/approval/${status}/${bookingId}`);
+            const data = await axiosInstance.get(`http://localhost:8000/api/v1/approval/${status}/${bookingId}`);
 
             //This is not working in any case delete only last booking
             // setrequestFromAdmins((prev) => [...prev.filter((i) => i._id.toString() !== bookingId)]);
