@@ -15,7 +15,7 @@ function getOAuth2Client() {
 }
 
 /** Controller that returns the code challenge to the client. */
-async function getCodeChallenge(req, res, next) {
+async function googleRedirect(req, res, next) {
   if (req.session.credentials) {
     // If session is already logged in, do not redirect to OAuth consent screen.
     res.status(200).json({ warning: "Already logged in" });
@@ -28,7 +28,21 @@ async function getCodeChallenge(req, res, next) {
         await oAuth2Client.generateCodeVerifierAsync();
       // Store the code verifier in the session
       req.session.codeVerifier = codeVerifier;
-      res.status(201).json({ codeChallenge });
+
+      // Generate OAuth URL to redirect to
+      const authUrl = oAuth2Client.generateAuthUrl({
+        access_type: "offline",
+        code_challenge: codeChallenge,
+        code_challenge_method: "S256",
+        hd: "iitbbs.ac.in",
+        scope: [
+          "openid",
+          "https://www.googleapis.com/auth/userinfo.profile",
+          "https://www.googleapis.com/auth/userinfo.email",
+        ],
+      });
+
+      res.redirect(authUrl);
     } catch (err) {
       next(err);
     }
@@ -75,7 +89,11 @@ async function googleLogin(req, res, next) {
         });
 
         // Attach the user's email address to the session
-        req.session.user = { emailId: userinfo.data.email };
+        req.session.user = {
+          emailId: userinfo.data.email,
+          userName: userinfo.data.name,
+          picture: userinfo.data.picture,
+        };
       } catch (err) {
         return next(err);
       }
@@ -88,10 +106,37 @@ async function googleLogin(req, res, next) {
           emailId: req.session.user.emailId,
         }).exec();
 
-        return res.status(201).json({
-          emailId: req.session.user.emailId,
-          registered: Boolean(user),
-        });
+        if (user) {
+          // Update the user's name if it has changed.
+          if (user.userName !== req.session.user.userName) {
+            user.userName = req.session.user.userName;
+            await user.save();
+          }
+
+          // If user is registered, send all details of the user
+          const { emailId, userName, phoneNo, role, rollNo } = user;
+          const userDetails = {
+            registered: true,
+            emailId,
+            userName,
+            phoneNo,
+            role,
+            picture: req.session.user.picture,
+          };
+          if (rollNo) {
+            userDetails.rollNo = rollNo;
+          }
+          res.status(200).json(userDetails);
+        } else {
+          // Send the details fetched from OIDC
+          const { emailId, userName, picture } = req.session.user;
+          res.status(200).json({
+            registered: false,
+            emailId,
+            userName,
+            picture,
+          });
+        }
       } catch (err) {
         return next(err);
       }
@@ -126,19 +171,47 @@ async function logout(req, res, next) {
 
 /**
  * Middleware function, that can be used to check for authentication on
- * protected API endpoints.
+ * protected API endpoints. Returns 401 Unauthorized if user is not
+ * authenticated, but continues if the user is authenticated, but not
+ * registered.
  */
-async function isAuthenticated(req, _res, next) {
+async function isAuthenticated(req, res, next) {
   if (req.session.credentials) {
+    // Try to find the user among the registered users
+    req.user = await User.findOne({ emailId: req.session.user.emailId }).exec();
     next();
   } else {
-    next(createError(401));
+    // Return 401 Unauthorized if user is not authenticated
+    res.status(401).json({ errors: "User is not authenticated" });
+  }
+}
+
+/**
+ * Middleware function, that can be used to check for authentication on
+ * protected API endpoints. Returns 401 Unauthorized if user is not registered.
+ */
+async function isRegistered(req, res, next) {
+  if (req.session.credentials) {
+    // Try to find the user among the registered users
+    req.user = await User.findOne({ emailId: req.session.user.emailId }).exec();
+
+    if (req.user) {
+      next();
+    } else {
+      res.status(401).json({
+        errors: `User '${req.session.user.email}' is not authenticated`,
+      });
+    }
+  } else {
+    // Return 401 Unauthorized if user is not authenticated
+    res.status(401).json({ errors: "User is not authenticated" });
   }
 }
 
 module.exports = {
-  getCodeChallenge,
+  googleRedirect,
   googleLogin,
   logout,
   isAuthenticated,
+  isRegistered,
 };

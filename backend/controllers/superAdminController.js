@@ -56,9 +56,11 @@ exports.getApprovalStatus = async (req, res) => {
               }
             });
             if (conflictbookings.length > 0)
-              conflictbookings.map(async (booking) => {
-                await bookingModel.findByIdAndRemove(booking._id);
-              });
+              await Promise.all(
+                conflictbookings.map((booking) =>
+                  bookingModel.findByIdAndRemove(booking._id).exec()
+                )
+              );
 
             await userBooking.save();
             res.status(200).json(`${bookingId} confirmed`);
