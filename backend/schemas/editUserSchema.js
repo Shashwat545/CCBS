@@ -7,36 +7,7 @@ const { checkSchema } = require("express-validator");
 // where 'D' is a digit, and 'A' is an alphabet (case insensitive).
 const rollNoRegExp = /^\d{2}[A-Za-z]{2}\d{5}$/;
 
-const registerUserSchema = checkSchema({
-  phoneNo: {
-    in: "body",
-    isMobilePhone: {
-      errorMessage: '"phoneNo" field should be a valid phone number',
-    },
-  },
-  rollNo: {
-    in: "body",
-    optional: true,
-    isString: {
-      errorMessage: "Expected roll number to be a string",
-    },
-    custom: {
-      options: (value) => {
-        if (!rollNoRegExp.test(value)) {
-          throw new Error(`Roll number should match ${rollNoRegExp}`);
-        }
-        return value;
-      },
-    },
-    customSanitizer: {
-      options: (value) => {
-        return value.toUpperCase();
-      },
-    },
-  },
-});
-
-const patchUserSchema = checkSchema({
+const editUserSchema = checkSchema({
   phoneNo: {
     in: "body",
     optional: true,
@@ -66,7 +37,4 @@ const patchUserSchema = checkSchema({
   },
 });
 
-module.exports = {
-  registerUserSchema,
-  patchUserSchema,
-};
+module.exports = editUserSchema;

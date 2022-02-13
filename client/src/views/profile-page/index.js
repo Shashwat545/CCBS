@@ -15,7 +15,7 @@ import { gridSpacing } from 'store/constant';
 import User_DP from 'assets/images/User_Profile.png';
 import App from './App';
 import FormikForm from './FormikForm';
-import axios from 'axios';
+import axiosInstance from '../../services/axiosInstance';
 import BookingHistory from './BookingHistory';
 
 // =========================z=====|| PROFILE PAGE ||============================== //
@@ -32,7 +32,7 @@ const ProfilePage = () => {
             //Dummy user
             const userId = '61cac6fe09d781b9ce072bf3';
             //Original user we will get original id from login page when user is loggedin
-            const response = await axios.get(`http://localhost:8000/api/v1/user/getUser/${userId}`);
+            const response = await axiosInstance.get('http://localhost:8000/api/v1/user/me/');
             updateFields(response.data);
         };
         loadBookingHandler();

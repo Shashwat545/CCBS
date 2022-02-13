@@ -130,6 +130,18 @@ async function googleLogin(req, res, next) {
         } else {
           // Send the details fetched from OIDC
           const { emailId, userName, picture } = req.session.user;
+
+          // Get emailId and userName from session, phoneNo and rollNo from request
+          // body, and role assigned by default is "student".
+          const newUser = new User({
+            emailId,
+            userName,
+            phoneNo: null,
+            role: "student",
+            rollNo: req.body.rollNo || null,
+          });
+          await newUser.save();
+
           res.status(200).json({
             registered: false,
             emailId,
@@ -172,36 +184,14 @@ async function logout(req, res, next) {
 /**
  * Middleware function, that can be used to check for authentication on
  * protected API endpoints. Returns 401 Unauthorized if user is not
- * authenticated, but continues if the user is authenticated, but not
- * registered.
+ * authenticated.
  */
 async function isAuthenticated(req, res, next) {
   if (req.session.credentials) {
     // Try to find the user among the registered users
     req.user = await User.findOne({ emailId: req.session.user.emailId }).exec();
+    await req.user.populate("bookings");
     next();
-  } else {
-    // Return 401 Unauthorized if user is not authenticated
-    res.status(401).json({ errors: "User is not authenticated" });
-  }
-}
-
-/**
- * Middleware function, that can be used to check for authentication on
- * protected API endpoints. Returns 401 Unauthorized if user is not registered.
- */
-async function isRegistered(req, res, next) {
-  if (req.session.credentials) {
-    // Try to find the user among the registered users
-    req.user = await User.findOne({ emailId: req.session.user.emailId }).exec();
-
-    if (req.user) {
-      next();
-    } else {
-      res.status(401).json({
-        errors: `User '${req.session.user.email}' is not authenticated`,
-      });
-    }
   } else {
     // Return 401 Unauthorized if user is not authenticated
     res.status(401).json({ errors: "User is not authenticated" });
@@ -213,5 +203,4 @@ module.exports = {
   googleLogin,
   logout,
   isAuthenticated,
-  isRegistered,
 };
