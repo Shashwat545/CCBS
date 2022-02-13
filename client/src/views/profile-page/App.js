@@ -4,6 +4,7 @@ import FormikForm from './FormikForm';
 
 function App() {
     const [fields, updateFields] = useState({
+        role: 'Student',
         name: 'Name',
         email: 'example@iitbbs.ac.in',
         mobile_no: '1234567890'

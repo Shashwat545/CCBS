@@ -3,6 +3,8 @@
  * @param {JsonObject} theme theme customization object
  */
 
+import { fontFamily } from '@mui/system';
+
 export default function themeTypography(theme) {
     return {
         fontFamily: theme?.customization?.fontFamily,
@@ -128,6 +130,14 @@ export default function themeTypography(theme) {
             width: '44px',
             height: '44px',
             fontSize: '1.5rem'
+        },
+        subHeading: {
+            fontSize: '17px',
+            fontFamily: "'Arvo',serif"
+        },
+        heading: {
+            fontSize: '20px',
+            fontFamily: "'Arvo',serif"
         }
     };
 }

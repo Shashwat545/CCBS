@@ -3,6 +3,8 @@ const { validationResult } = require("express-validator");
 const bookingModel = require("../models/bookingModel");
 const userModel = require("../models/userModel");
 
+const nodemailer = require("./nodeMailerController");
+
 const getAllBookings = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -22,7 +24,9 @@ const getAllBookings = async (req, res) => {
   }
 
   try {
-    const bookings = await bookingModel.find(bookingFilter);
+    const bookings = await bookingModel
+      .find(bookingFilter)
+      .populate("bookedBy");
     res.status(200).json(bookings);
   } catch (err) {
     res.status(500).send(err);
@@ -56,9 +60,16 @@ const sendBookingRequest = async (
       if (conflictbookingId != null)
         await bookingModel.findByIdAndRemove(conflictbookingId);
       const bookRequest = await bookingModel.create(booking);
+
       const bookingUser = await userModel.findById(user._id);
       bookingUser.bookings.unshift(bookRequest);
       bookingUser.save();
+
+      if (bookingUser.role === "superAdmin") {
+        for (let superAdmin in bookRequest.approvedBy)
+          bookRequest.approvedBy[superAdmin] = "accepted";
+        bookRequest.save();
+      }
       res.status(200).json(bookRequest);
     }
   } catch (err) {
@@ -94,9 +105,9 @@ const createBooking = async (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-    });
-     req.user = await userModel.findById("61b9d1dd4ce21a9d62a0f2a2");*/
-     
+    });*/
+  // req.user = await userModel.findById("61cac6fe09d781b9ce072bf3");
+
   //Creating a newBooking object
   const newBooking = {
     startTime: new Date(req.body.startTime),
@@ -142,11 +153,24 @@ const createBooking = async (req, res) => {
               conflictbooking._id,
               req.user
             );
+            //mail the super admin that his booking has been confirmed
+            const sentMail = await nodemailer.transporter.sendMail(
+              nodemailer.superBookingConfirmation(conflictingBooking,newBooking)
+            );
+            //mail tha conflicting booking user that his booking has been cancelled
+            const sentMail = await nodemailer.transporter.sendMail(
+              nodemailer.bookingCancellation(conflictingBooking)
+            );
           }
         } else if (newBooking.bookedBy.role === "admin") {
           //If conflict booking is not approved till now then we have to create this booking
-          if (!isConflictBookingApproved)
+          if (!isConflictBookingApproved){
             sendBookingRequest(true, newBooking, res, null, req.user);
+            //mail the admin that his booking is confirmed
+            const sentMail = await nodemailer.transporter.sendMail(
+              nodemailer.waitForConfirmation(conflictingBooking,newBooking)
+            );
+          }
           else if (conflictbooking.bookedBy.role === "student") {
             //Create the booking and send for approval and also tell the conflict user(student) that your booking is cancelled
             sendBookingRequest(
@@ -156,22 +180,39 @@ const createBooking = async (req, res) => {
               conflictbooking._id,
               req.user
             );
+            // send the user a mail of his booking details
+            const sentMail = await nodemailer.transporter.sendMail(
+              nodemailer.waitForConfirmation(req.user, newBooking)
+            );
+            // send mail to the conflicting booking user that his booking has been cancelled
+            const sentMail = await nodemailer.transporter.sendMail(
+              nodemailer.bookingCancellation(conflictingBooking)
+            );
           } else {
             //Tell new user that slots are already booked
             sendBookingRequest(false, message, res);
           }
         } else {
           //If conflict booking is not approved till now then we have to create this booking
-          if (!isConflictBookingApproved)
+          if (!isConflictBookingApproved){
             sendBookingRequest(true, newBooking, res, null, req.user);
-          //Tell new user that slots are already booked
-          else sendBookingRequest(false, message, res);
+            const sentMail = await nodemailer.transporter.sendMail(
+              nodemailer.waitForConfirmation(req.user, newBooking)
+            );
+          
+          }
+
+          else //Tell new user that slots are already booked
+           sendBookingRequest(false, message, res);
         }
       })
     );
   } else {
     //Create the booking as there are no conflict and send for approval
     sendBookingRequest(true, newBooking, res, null, req.user);
+    const sentMail = await nodemailer.transporter.sendMail(
+      nodemailer.waitForConfirmation(req.user, newBooking)
+    );
   }
 };
 
@@ -184,6 +225,8 @@ const deleteBooking = async (req, res) => {
   }
 };
 
+
+//This updateBooking is changing the date, time and reason without approval of the superAdmins. This has to be worked upon.
 const updateBooking = async (req, res) => {
   try {
     const updatedStartTime = req.body.startTime;

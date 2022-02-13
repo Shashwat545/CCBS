@@ -13,10 +13,11 @@ const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));
 const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
 const UtilsMaterialIcons = Loadable(lazy(() => import('views/utilities/MaterialIcons')));
 const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
+const AuthLogin3 = Loadable(lazy(() => import('views/pages/authentication/authentication3/Login3')));
 
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
-
+const ProfilePage = Loadable(lazy(() => import('views/profile-page/index')));
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -25,7 +26,7 @@ const MainRoutes = {
     children: [
         {
             path: '/',
-            element: <DashboardDefault />
+            element: <ProfilePage />
         },
         {
             path: '/dashboard/default',
