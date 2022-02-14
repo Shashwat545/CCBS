@@ -28,9 +28,6 @@ const ProfilePage = () => {
         setLoading(false);
         const loadBookingHandler = async () => {
             //Fetching the data of user and it's booking
-
-            //Dummy user
-            const userId = '61cac6fe09d781b9ce072bf3';
             //Original user we will get original id from login page when user is loggedin
             const response = await axiosInstance.get('http://localhost:8000/api/v1/user/me/');
             updateFields(response.data);

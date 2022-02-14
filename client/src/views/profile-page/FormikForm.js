@@ -2,9 +2,21 @@
 import React, { Component } from 'react';
 import { withFormik, Form, Field } from 'formik';
 import './Form.css';
+import { useNavigate } from 'react-router';
+import axiosInstance from '../../services/axiosInstance';
 
 const form_id = 'form_id';
 class MaintenanceForm extends Component {
+    // render() {
+    //     // Get it from props
+    //     const { navigation } = this.props;
+    //   }
+    constructor(props) {
+        super(props);
+        this.myRefForMoblie = React.createRef();
+        this.myRefForRollNo = React.createRef();
+    }
+
     editOnClick = (event) => {
         event.preventDefault();
         const data = !this?.props?.status?.edit;
@@ -21,13 +33,27 @@ class MaintenanceForm extends Component {
         });
     };
 
+    saveChangesHandler = async (event) => {
+        event.preventDefault();
+        // console.log(this.myRefForMoblie.current.value);
+        const body = { phoneNo: this.myRefForMoblie.current.value || null, rollNo: this.myRefForRollNo.current.value || null };
+        if (body.phoneNo || body.rollNo) {
+            const data = await axiosInstance.put('http://localhost:8000/api/v1/user/me', body);
+        }
+        this.props.resetForm();
+        this.props.setStatus({
+            edit: false
+        });
+        // this.props.navigation.navigate('/free/pages/profile-page', { replace: true });
+    };
+
     _renderAction() {
         return (
             <React.Fragment>
                 <div className="form-statusbar">
                     {this?.props?.status?.edit ? (
                         <React.Fragment>
-                            <button className="save_button" type="submit" form={form_id}>
+                            <button className="save_button" type="submit" form={form_id} onClick={this.saveChangesHandler}>
                                 Save
                             </button>
                             <button className="cancel_button" onClick={this.cancelOnClick}>
@@ -105,7 +131,19 @@ class MaintenanceForm extends Component {
                 <div className="form-group row">
                     <label className="col-sm-2 col-form-label">Mobile No</label>
                     <div className="col-sm-10">
-                        <Field type="text" name="mobile_no" className="mobileNumber_input" placeholder="Mobile No" />
+                        <input
+                            type="text"
+                            ref={this.myRefForMoblie}
+                            className="mobileNumber_input"
+                            placeholder="Mobile No"
+                            name="mobile_no"
+                        />
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <label className="col-sm-2 col-form-label">Roll no:</label>
+                    <div className="col-sm-10">
+                        <input type="text" ref={this.myRefForRollNo} className="mobileNumber_input" placeholder="Roll no" name="Roll_no:" />
                     </div>
                 </div>
             </React.Fragment>
