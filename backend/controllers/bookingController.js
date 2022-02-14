@@ -42,6 +42,13 @@ const getOneBooking = async (req, res) => {
   }
 };
 
+async function nodemailerSendMail(action,user,booking){
+ await nodemailer.transporter.sendMail(
+    action(user,booking)
+  )
+}
+
+
 const sendBookingRequest = async (
   isBooking,
   booking,
@@ -161,29 +168,31 @@ const createBooking = async (req, res) => {
             );
             let sentMail = null;
             //mail the super admin that his booking has been confirmed
-
-            sentMail = nodemailer.transporter.sendMail(
-              nodemailer.superBookingConfirmation(
-                conflictbooking.bookedBy,
-                bookingDetailsForMail
-              )
-            );
+            nodemailerSendMail(nodemailer.superBookingConfirmation,req.user,bookingDetailsForMail);
+            // sentMail = nodemailer.transporter.sendMail(
+            //   nodemailer.superBookingConfirmation(
+            //     conflictbooking.bookedBy,
+            //     bookingDetailsForMail
+            //   )
+            // );
             //mail tha conflicting booking user that his booking has been cancelled
-            sentMail = nodemailer.transporter.sendMail(
-              nodemailer.bookingCancellation(conflictbooking.bookedBy)
-            );
+            nodemailerSendMail(nodemailer.bookingCancellation,conflictbooking.bookedBy,null);
+            // sentMail = nodemailer.transporter.sendMail(
+            //   nodemailer.bookingCancellation(conflictbooking.bookedBy)
+            // );
           }
         } else if (newBooking.bookedBy.role === "admin") {
           //If conflict booking is not approved till now then we have to create this booking
           if (!isConflictBookingApproved) {
             sendBookingRequest(true, newBooking, res, null, req.user);
             //mail the admin that his booking is confirmed
-            sentMail = nodemailer.transporter.sendMail(
-              nodemailer.waitForConfirmation(
-                conflictbooking.bookedBy,
-                bookingDetailsForMail
-              )
-            );
+            nodemailerSendMail(nodemailer.waitForConfirmation,req.user,bookingDetailsForMail);
+            // sentMail = nodemailer.transporter.sendMail(
+            //   nodemailer.waitForConfirmation(
+            //     conflictbooking.bookedBy,
+            //     bookingDetailsForMail
+            //   )
+            // );
           } else if (conflictbooking.bookedBy.role === "student") {
             //Create the booking and send for approval and also tell the conflict user(student) that your booking is cancelled
             sendBookingRequest(
@@ -194,13 +203,15 @@ const createBooking = async (req, res) => {
               req.user
             );
             // send the user a mail of his booking details
-            sentMail = nodemailer.transporter.sendMail(
-              nodemailer.waitForConfirmation(req.user, bookingDetailsForMail)
-            );
+            nodemailerSendMail(nodemailer.waitForConfirmation,req.user,bookingDetailsForMail);
+            // sentMail = nodemailer.transporter.sendMail(
+            //   nodemailer.waitForConfirmation(req.user, bookingDetailsForMail)
+            // );
             // send mail to the conflicting booking user that his booking has been cancelled
-            sentMail = nodemailer.transporter.sendMail(
-              nodemailer.bookingCancellation(req.user)
-            );
+            nodemailerSendMail(nodemailer.bookingCancellation,conflictbooking.bookedBy,null);
+            // sentMail = nodemailer.transporter.sendMail(
+            //   nodemailer.bookingCancellation(req.user)
+            // );
           } else {
             //Tell new user that slots are already booked
             sendBookingRequest(false, message, res);
@@ -209,9 +220,10 @@ const createBooking = async (req, res) => {
           //If conflict booking is not approved till now then we have to create this booking
           if (!isConflictBookingApproved) {
             sendBookingRequest(true, newBooking, res, null, req.user);
-            sentMail = nodemailer.transporter.sendMail(
-              nodemailer.waitForConfirmation(req.user, bookingDetailsForMail)
-            );
+            nodemailerSendMail(nodemailer.waitForConfirmation,req.user,bookingDetailsForMail);
+            // sentMail = nodemailer.transporter.sendMail(
+            //   nodemailer.waitForConfirmation(req.user, bookingDetailsForMail)
+            // );
           } //Tell new user that slots are already booked
           else sendBookingRequest(false, message, res);
         }
@@ -220,9 +232,10 @@ const createBooking = async (req, res) => {
   } else {
     //Create the booking as there are no conflict and send for approval
     sendBookingRequest(true, newBooking, res, null, req.user);
-    sentMail = nodemailer.transporter.sendMail(
-      nodemailer.waitForConfirmation(req.user, bookingDetailsForMail)
-    );
+    nodemailerSendMail(nodemailer.waitForConfirmation,req.user,bookingDetailsForMail);
+    // sentMail = nodemailer.transporter.sendMail(
+    //   nodemailer.waitForConfirmation(req.user, bookingDetailsForMail)
+    // );
   }
 };
 

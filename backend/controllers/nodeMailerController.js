@@ -4,9 +4,9 @@ const nodemailer = require("nodemailer");
 
 // create reusable transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
-  host: "smtppro.zoho.in",
-  port: 587,
-  secure: false, // true for 465, false for other ports
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // true for 465, false for other ports
   auth: {
     user: process.env.NODEMAILER_ID, // generated ethereal user    //replace this with username no-reply@iitbbs.ac.in
     pass: process.env.NODEMAILER_PASSWORD, // generated ethereal password   //replace this with our no-reply account password as process.env.emailPassword
@@ -24,7 +24,7 @@ class NoReplyMail {
 }
 
 const waitForConfirmation = (user, booking) => {
-  new NoReplyMail(
+  return new NoReplyMail(
     "no-reply@iitbbs.ac.in",
     `${user.emailId}`, ////map the user mail here
     "Status of your Booking",
@@ -37,8 +37,8 @@ const waitForConfirmation = (user, booking) => {
   );
 };
 
-const bookingCancellation = (user) => {
-  new NoReplyMail(
+const bookingCancellation = (user,booking) => {
+  return new NoReplyMail(
     "no-reply@iitbbs.ac.in",
     `${user.emailId}`,
     "Cancellation of your Booking Request",
@@ -48,7 +48,7 @@ const bookingCancellation = (user) => {
 };
 
 const bookingConfirmation = (user, booking) => {
-  new NoReplyMail(
+  return new NoReplyMail(
     "no-reply@iitbbs.ac.in",
     `${user.emailId}`,
     "Confirmation of your Booking",
@@ -62,7 +62,7 @@ const bookingConfirmation = (user, booking) => {
 };
 
 const superBookingConfirmation = (user, booking) => {
-  new NoReplyMail(
+  return new NoReplyMail(
     "no-reply@iitbbs.ac.in",
     `${user.emailId}`,
     "Confirmation of your Booking",
