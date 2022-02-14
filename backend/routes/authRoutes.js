@@ -7,7 +7,7 @@ router.get("/status", authController.isAuthenticated, (req, res) => {
   res.sendStatus(204);
 });
 
-router.get("/google/challenge", authController.getCodeChallenge);
+router.get("/google/redirect", authController.googleRedirect);
 
 router.post("/google/login", googleLoginSchema, authController.googleLogin);
 

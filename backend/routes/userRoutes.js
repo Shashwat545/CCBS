@@ -1,33 +1,22 @@
 const express = require("express");
 const router = express.Router();
-const userController = require("../controllers/userController");
 const { isAuthenticated } = require("../controllers/authController");
-const getBookingSchema = require("../schemas/getBookingSchema");
+const userController = require("../controllers/userController");
+const editUserSchema = require("../schemas/editUserSchema");
 
+router.get("/getUser/:userId", userController.getOneUser);
 
-router.post(
-  "/",
-  isAuthenticated,
-  getBookingSchema,
-  userController.postCreateUser
-);
-router.get(
-  "/getUser/:userId",
-  isAuthenticated,
-  getBookingSchema,
-  userController.getOneUser
-);
-router.get(
-  "/allUsers",
-  isAuthenticated,
-  getBookingSchema,
-  userController.getAllUser
-);
+router.get("/allUsers", userController.getAllUser);
+
+router.get("/me", isAuthenticated, userController.getCurrentUser);
+
+router.put("/me", isAuthenticated, editUserSchema, userController.putUserInfo);
+
 router.patch(
-  "/editPorfile/:userId",
+  "/me",
   isAuthenticated,
-  getBookingSchema,
-  userController.updateUserInfo
+  editUserSchema,
+  userController.patchUserInfo
 );
 
 module.exports = router;
