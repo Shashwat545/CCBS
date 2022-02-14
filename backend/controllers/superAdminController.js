@@ -1,4 +1,5 @@
 const bookingModel = require("./../models/bookingModel");
+const nodemailer = require("./nodeMailerController");
 
 const superAdmin = [
   "abc@iitbbs.ac.in",
@@ -10,17 +11,23 @@ exports.getSuperAdmin = (req, res) => {
   res.status(200).json(superAdmin);
 };
 
+async function nodemailerSendMail(action, user, booking) {
+  await nodemailer.transporter.sendMail(action(user, booking));
+}
+
 exports.getApprovalStatus = async (req, res) => {
   const status = req.params.status;
-  const userRole = req.user.role;
-//   const userRole = "superAdmin";
+  //  const userRole = req.user.role;
+  const userRole = "superAdmin";
 
   if (userRole !== "superAdmin")
     res.status(401).send("You are not authorized to this");
   const bookingId = req.params.bookingId;
+  const userBooking = await bookingModel.findById(bookingId);
   //Tell user that your booking{bookingId} is cancelled via mail and delete the booking also from database
   if (status === "reject") {
     try {
+      nodemailerSendMail(nodemailer.bookingCancellation, req.user, userBooking);
       await bookingModel.findByIdAndRemove(req.params.bookingId);
       res.status(200).json("Booking deleted successfully");
     } catch (err) {
@@ -28,7 +35,6 @@ exports.getApprovalStatus = async (req, res) => {
     }
   } else {
     try {
-      const userBooking = await bookingModel.findById(bookingId);
       let pendingIndex = 0,
         flag = 1;
       for (const superAdmin in userBooking.approvedBy) {
@@ -38,6 +44,11 @@ exports.getApprovalStatus = async (req, res) => {
             flag = 0;
             userBooking.approvedBy[superAdmin] = "accepted";
             console.log("Send Email!!!!");
+            nodemailerSendMail(
+              nodemailer.bookingConfirmation,
+              req.user,
+              userBooking
+            );
             //send a mail that you booking is confirmed
 
             //Deleting all other booking which are conflicted
@@ -74,22 +85,23 @@ exports.getApprovalStatus = async (req, res) => {
           break;
         }
       }
-      if (flag) {
-        console.log("Already Booked");
-        res
-          .status(200)
-          .send(`${bookingId} is already confirmed no futher need`);
-      }
+      // if (flag) {
+      //   console.log("Already Booked");
+      //   res
+      //     .status(200)
+      //     .send(`${bookingId} is already confirmed no futher need`);
+      // }
     } catch (err) {
       res.status(500).send(err);
     }
   }
 };
 
-exports.isSuperAdmin=(req,res,next)=>{
-  if (req.user.role==="superAdmin") {
-    next();
-  } else {
-    next(createError(401));
-  }
-}
+exports.isSuperAdmin = (req, res, next) => {
+  next();
+  // if (req.user.role==="superAdmin") {
+  //   next();
+  // } else {
+  //   next(createError(401));
+  // }
+};
